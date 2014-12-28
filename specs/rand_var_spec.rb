@@ -1,23 +1,7 @@
+$:.unshift "src"
+
 require "rspec"
-
-require_relative("../src/pspace")
-
-# PSpace.import(data)
-
-# PSpace.rv(:car).count
-# PSpace.rv(:car).given(:weight).count
-
-# PSpace.rv(:weight).prob
-
-# PSpace.rv(weight: 180).prob
-
-# PSpace.rv(:weight).given(:displacement).prob
-
-# PSpace.rv(:weight).given(x: :bbq).entropy
-
-# PSpace.entropy(:weight).given(:x)
-
-# PSpace.infogain(:weight).given(:x)
+require "pspace"
 
 describe RandVar do
   let(:data) {
