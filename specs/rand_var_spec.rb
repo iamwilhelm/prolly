@@ -101,10 +101,63 @@ describe RandVar do
         expect(result).to be_within(0.001).of(2.0 / 3)
       end
     end
-  end
 
+    context "when prob color | size" do
+      it "is ..." do
+        #result = PSpace.rv(:color).given(:size).prob
       end
     end
+  end
+
+  describe "#entropy" do
+    before do
+      PSpace.import(data)
+    end
+
+    context "when entropy of color" do
+      it "is H(X) = -∑ (pn log pn)" do
+        expect(PSpace.rv(:color).entropy).to be_within(0.001).of(
+          -0.6 * Math.log(0.6) / Math.log(10) - 0.4 * Math.log(0.4) / Math.log(10)
+        )
+      end
+    end
+
+    context "when entropy of color | size = small" do
+      it "is H(color | size = small)" do
+        expect(PSpace.rv(:color).given(size: :small).entropy).to be_within(0.001).of(
+          -(1.0/3) * Math.log(1.0/3) / Math.log(10) -
+          (2.0/3) * Math.log(2.0/3) / Math.log(10)
+        )
+      end
+    end
+
+    context "when entropy of color | size" do
+      it "is H(color | size)" do
+        result = PSpace.rv(:color).given(:size).entropy
+        #puts result
+        expect(result).to be_within(0.001).of(
+          (0.6) * (-(2.0/3) * Math.log(2.0/3) / Math.log(10) - (1.0/3) * Math.log(1.0/3) / Math.log(10)) + # :small
+          (0.2) * (-(0.0) - (1.0) * Math.log(1.0) / Math.log(10)) + # :med
+          (0.2) * (-(1.0) * Math.log(1.0) / Math.log(10) - (0.0))   # :large
+        )
+      end
+    end
+  end
+
+  describe "#infogain" do
+    before do
+      PSpace.import(data)
+    end
+
+    context "when color | size" do
+      it "I(color | size) = H(color) - H(color | size)" do
+        result = PSpace.rv(:color).given(:size).infogain
+        expect(result).to be_within(0.001).of(
+          PSpace.rv(:color).entropy - PSpace.rv(:color).given(:size).entropy
+        )
+      end
+    end
+
   end
 
 end

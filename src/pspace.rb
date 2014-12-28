@@ -70,11 +70,11 @@ class RandVar
       rval = @rv[rkey]
 
       if @gv.empty?
-        # with only rv = :something
+        # P(color=green)
         numer = self.count()
         denom = @pspace.count(rkey, nil)
       else
-        # with given
+        # P(color=green | size=small)
         gkey = @gv.keys.first
         gval = @gv[gkey]
 
@@ -86,16 +86,19 @@ class RandVar
     else
       distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
         if @gv.empty?
-          # with only rv
-          # should return a distribution
-            [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
-        else
+          # P(color) = [P(color=green), P(color=blue)]
+          [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
+        elsif @gv.class == Hash
+          # P(color | size=small) =
+          #   [P(color=green | size=small), P(color=blue | size=small)]
           gkey = @gv.keys.first
           gval = @gv[gkey]
 
-          distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-            [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
-          end
+          [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
+        else
+          # P(color | size) =
+          #   [P(color | size=small), P(color | size=???)]
+          [rv_val, PSpace.rv(@rv.to_sym).given(@gv.to_sym).prob]
         end
       end
 
@@ -103,10 +106,37 @@ class RandVar
     end
   end
 
+  # Entropy doesn't take hashes (for now?)
+  # If it did, I'm not sure what H(color=green) means at all.
   def entropy
+    if @gv.class == Hash or @gv.empty?
+      #gkey = @gv.keys.first
+      #gval = @gv[gkey]
+
+      distr = prob
+      #puts "---"
+      distr.inject(0) do |t, kv|
+        name, pn = kv
+        #puts "P(#{@rv}=#{name}|#{gkey}=#{gval})*log P(#{@rv}=#{name}|#{gkey}=#{gval})"
+        t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
+      end
+    else
+      @pspace.uniq_vals(@gv).inject(0) do |t, gval|
+        pn = PSpace.rv(@gv.to_sym => gval).prob
+        hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
+        #puts "P(#{@gv}=#{gval}) #{pn} * H(#{@rv}|#{@gv}=#{gval}) #{hn}"
+        t += pn * hn
+      end
+    end
+
   end
 
+  # need to always be I(Y | X)
   def infogain
+    raise "Need given var" if @gv.empty?
+    raise "Need unspecified given var" if @gv.class == Hash
+    raise "Need unspecified rand var" if @rv.class == Hash
+    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
   end
 
 end
