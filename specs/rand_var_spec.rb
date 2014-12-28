@@ -65,8 +65,12 @@ describe RandVar do
         expect(PSpace.rv(:color).prob).to be_an_instance_of(Hash)
       end
 
-      it "is a distribution of blue and green" do
-        expect(PSpace.rv(:color).prob).to be
+      it "is a distribution of blue = 2/5 and green = 3/5" do
+        result = PSpace.rv(:color).prob
+        expect(result.keys).to include(:blue)
+        expect(result[:blue]).to eql(2.0 / 5)
+        expect(result.keys).to include(:green)
+        expect(result[:green]).to eql(3.0 / 5)
       end
     end
 
@@ -76,9 +80,29 @@ describe RandVar do
       end
     end
 
+    context "when prob color | size == small" do
+      it "is a distribution" do
+        result = PSpace.rv(:color).given(size: :small).prob
+        expect(result).to be_an_instance_of(Hash)
+      end
+
+      it "is a distribution of blue = 1/3, green = 2/3" do
+        result = PSpace.rv(:color).given(size: :small).prob
+        expect(result.keys).to include(:blue)
+        expect(result[:blue]).to eql(1.0 / 3)
+        expect(result.keys).to include(:green)
+        expect(result[:green]).to eql(2.0 / 3)
+      end
+    end
+
     context "when prob color = green | size == small" do
       it "is 2/3" do
-        expect(PSpace.rv(color: :green).given(size: :small).prob).to be_within(0.001).of(2.0 / 3)
+        result = PSpace.rv(color: :green).given(size: :small).prob
+        expect(result).to be_within(0.001).of(2.0 / 3)
+      end
+    end
+  end
+
       end
     end
   end

@@ -63,15 +63,18 @@ class RandVar
     end
   end
 
+
   def prob
     if @rv.class == Hash
       rkey = @rv.keys.first
       rval = @rv[rkey]
 
       if @gv.empty?
+        # with only rv = :something
         numer = self.count()
         denom = @pspace.count(rkey, nil)
       else
+        # with given
         gkey = @gv.keys.first
         gval = @gv[gkey]
 
@@ -81,9 +84,19 @@ class RandVar
 
       return numer.to_f / denom
     else
-      # should return a distribution
       distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-        [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
+        if @gv.empty?
+          # with only rv
+          # should return a distribution
+            [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
+        else
+          gkey = @gv.keys.first
+          gval = @gv[gkey]
+
+          distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
+            [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
+          end
+        end
       end
 
       Hash[*distr]
