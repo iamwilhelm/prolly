@@ -228,9 +228,34 @@ class RandVar
   # need to always be I(Y | X)
   def infogain
     raise "Need given var" if @gv.empty?
-    raise "Need unspecified given var" if @gv.class == Hash
     raise "Need unspecified rand var" if @rv.class == Hash
-    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
+    if @gv.class == Hash
+      #gkey = @gv.keys.first
+      #gval = @gv[gkey]
+      #puts "I(#{@rv} | #{gkey} = #{gval})"
+      #PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(gkey => gval).entropy
+    else
+      # puts "I(#{@rv} | #{@gv})"
+      PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
+    end
+  end
+
+  def infogain_rv_eq
+  end
+
+  def infogain_rv_eq_gv_eq
+  end
+
+  def infogain_rv_eq_gv
+  end
+
+  def infogain_rv
+  end
+
+  def infogain_rv_gv_eq
+  end
+
+  def infogain_rv_gv
   end
 
 end
