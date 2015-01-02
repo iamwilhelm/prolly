@@ -121,26 +121,108 @@ class RandVar
   # Entropy doesn't take hashes (for now?)
   # If it did, I'm not sure what H(color=green) means at all.
   def entropy
-    if @gv.class == Hash or @gv.empty?
-      #gkey = @gv.keys.first
-      #gval = @gv[gkey]
+    if @rv.class == Hash
+      raise "H(color=green) not implemented"
 
-      distr = prob
-      #puts "---"
-      distr.inject(0) do |t, kv|
-        name, pn = kv
-        #puts "P(#{@rv}=#{name}|#{gkey}=#{gval})*log P(#{@rv}=#{name}|#{gkey}=#{gval})"
-        t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
+      if @gv.empty?
+        entropy_rv_eq
+      else
+        #entropy_rv_eq_gv_eq
+        #entropy_rv_eq_gv
       end
+
     else
-      @pspace.uniq_vals(@gv).inject(0) do |t, gval|
-        pn = PSpace.rv(@gv.to_sym => gval).prob
-        hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
-        #puts "P(#{@gv}=#{gval}) #{pn} * H(#{@rv}|#{@gv}=#{gval}) #{hn}"
-        t += pn * hn
+      #puts "H(#{@rv} | #{@gv})"
+
+      if @gv.empty?
+        entropy_rv
+      elsif @gv.class == Hash
+        entropy_rv_gv_eq
+      else 
+        entropy_rv_gv
       end
+
+    end
+  end
+
+  # H(color=green)
+  def entropy_rv_eq
+  end
+
+  # H(color=green | size=small)
+  def entropy_rv_eq_gv_eq
+    rkey = @rv.keys.first
+    rval = @rv[rkey]
+
+    gkey = @gv.keys.first
+    gval = @gv[gkey]
+    # puts "H(#{@rv} = | #{gkey} = #{gval}) ="
+
+    distr = prob
+    distr.inject(0) do |t, kv|
+      name, pn = kv
+      # puts "  P(#{@rv}=#{name}|#{gkey}=#{gval})*log P(#{@rv}=#{name}|#{gkey}=#{gval}) +"
+      t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
+    end.tap { |val|
+      # puts "  = #{val}"
+    }
+  end
+
+  # H(color=green | size)
+  def entropy_rv_eq_gv
+    if @rv.class == Hash
+      rkey = @rv.keys.first
+      rval = @rv[rkey]
+      # puts "H(#{rkey}) = #{rval} | #{@gv}) ="
     end
 
+    @pspace.uniq_vals(@gv).inject(0) do |t, gval|
+      pn = PSpace.rv(@gv.to_sym => gval).prob
+      hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
+
+      # puts "  P(#{@gv} = #{gval}) * H(#{@rv} | #{@gv}=#{gval}) (#{pn * hn}) +"
+      t += pn * hn
+    end
+  end
+
+  # H(color)
+  def entropy_rv
+    # puts "H(#{@rv})"
+
+    distr = prob
+    distr.inject(0) do |t, kv|
+      name, pn = kv
+      # puts "  P(#{@rv}=#{name}) * log P(#{@rv}=#{name}) + "
+      t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
+    end.tap { |val|
+      # puts "  = #{val}"
+    }
+  end
+
+  # H(color | size=small)
+  def entropy_rv_gv_eq
+    gkey = @gv.keys.first
+    gval = @gv[gkey]
+
+    # puts "H(#{@rv} | #{gkey} = #{gval}) ="
+
+    distr = prob
+    distr.inject(0) do |t, kv|
+      name, pn = kv
+      # puts "  P(#{@rv} = #{name} | #{gkey} = #{gval}) * log P(#{@rv} = #{name} | #{gkey} = #{gval}) +"
+      t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
+    end.tap { |val|
+      # puts "  = #{val}"
+    }
+  end
+
+  # H(color | size)
+  def entropy_rv_gv
+    # puts "H(#{@rv} | #{@gv}) ="
+
+    entropy_rv_eq_gv.tap { |val|
+      # puts "  = #{val}"
+    }
   end
 
   # need to always be I(Y | X)
