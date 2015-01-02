@@ -31,45 +31,91 @@ class RandVar
 
 
   def prob
+    #puts "P(#{@rv} | #{@gv})"
     if @rv.class == Hash
-      rkey = @rv.keys.first
-      rval = @rv[rkey]
 
       if @gv.empty?
-        # P(color=green)
-        numer = self.count()
-        denom = @pspace.count(rkey, nil)
+        prob_rv_eq
       else
-        # P(color=green | size=small)
-        gkey = @gv.keys.first
-        gval = @gv[gkey]
-
-        numer = @pspace.count2(rkey, rval, gkey, gval)
-        denom = @pspace.count(gkey, gval)
+        prob_rv_eq_gv_eq
       end
 
-      return numer.to_f / denom
     else
-      distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-        if @gv.empty?
-          # P(color) = [P(color=green), P(color=blue)]
-          [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
-        elsif @gv.class == Hash
-          # P(color | size=small) =
-          #   [P(color=green | size=small), P(color=blue | size=small)]
-          gkey = @gv.keys.first
-          gval = @gv[gkey]
+      #puts "distr : #{@rv.to_s} : #{@gv.to_s}"
 
-          [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
-        else
-          # P(color | size) =
-          #   [P(color | size=small), P(color | size=???)]
-          [rv_val, PSpace.rv(@rv.to_sym).given(@gv.to_sym).prob]
-        end
+      if @gv.empty?
+        prob_rv
+      elsif @gv.class == Hash
+        prob_rv_gv_eq
+      else
+        prob_rv_gv
       end
 
-      Hash[*distr]
     end
+  end
+
+  # P(color=green)
+  def prob_rv_eq
+    rkey = @rv.keys.first
+    rval = @rv[rkey]
+
+    numer = self.count()
+    denom = @pspace.count(rkey, nil)
+
+    return numer.to_f / denom
+  end
+
+  # P(color=green | size=small)
+  def prob_rv_eq_gv_eq
+    rkey = @rv.keys.first
+    rval = @rv[rkey]
+
+    gkey = @gv.keys.first
+    gval = @gv[gkey]
+
+    numer = @pspace.count2(rkey, rval, gkey, gval)
+    denom = @pspace.count(gkey, gval)
+
+    return numer.to_f / denom
+  end
+
+  # P(color=green | size)
+  def prob_rv_eq_gv
+    # NOT USED
+  end
+
+  # P(color) = [P(color=green), P(color=blue)]
+  def prob_rv
+    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
+      #puts "rv : #{@rv.to_s} | #{@gv.to_s}"
+      [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
+    end
+    Hash[*distr]
+  end
+
+  # P(color | size=small) =
+  #   [P(color=green | size=small), P(color=blue | size=small)]
+  def prob_rv_gv_eq
+    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
+      gkey = @gv.keys.first
+      gval = @gv[gkey]
+
+      #puts "rv | gv = #gv : #{@rv.to_s} | #{@gv.to_s}"
+
+      [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
+    end
+    Hash[*distr]
+  end
+
+  # P(color | size) =
+  #   [P(color | size=small), P(color | size=???)]
+  def prob_rv_gv
+    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
+      #puts "rv | gv : #{@rv.to_s} | #{@gv.to_s}"
+
+      [rv_val, PSpace.rv(@rv.to_sym).given(@gv.to_sym).prob]
+    end
+    Hash[*distr]
   end
 
   # Entropy doesn't take hashes (for now?)
