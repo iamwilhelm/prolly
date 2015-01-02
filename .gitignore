@@ -2,65 +2,10 @@
 *~
 \#*\#
 .\#*
-
-# various rails files should be ignored
-.bundle
-.autotest
-log/*
-tmp/*
-doc/app/*
-coverage/*
-.DS_Store
-**/.DS_Store
-.dotest/*
-app/stylesheets/.sass-cache/*
-.sass-cache/*
-vendor/plugins/exception_notification/*
 *.swp
-.*.rb.swp
-public/system
+*.swo
 
-# node files to ignore
-npm-debug.log
-node_modules
+data/
+profile/
 
-# ignore sqlite 3 stuff for development
-*.sqlite3
-db/development.sqlite3
 
-### ignore various cubehero directories
-
-# dev directories
-repos
-experimental
-
-tmp/cache/
-web/public/attachments
-
-# ignore js files
-hub.js
-apps/*.js
-apps/apioca/*.js
-jobs/*.js
-lib/boba/*.js
-lib/boba/specs/*.js
-lib/nuthole/*.js
-lib/nuthole/stores/*.js
-lib/numeric.js
-lib/stringify.js
-hooks/*.js
-hooks/utils/*.js
-hooks/specs/test_hooks.js
-web/models/*.js
-web/mailers/*.js
-web/routes/*.js
-web/routes/admin/*.js
-web/*.js
-utils/*.js
-share/models/*.js
-share/converters/*.js
-share/recommenders/*.js
-share/extern/*.js
-specs/web/controllers/*.js
-specs/web/models/*.js
-migrations/*.js
