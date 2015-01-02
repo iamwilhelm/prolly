@@ -24,8 +24,8 @@ class PSpace
       @ps.stash
     end
 
-    def uniq_vals(name)
-      @ps.uniq_vals(name)
+    def uniq_vals(rv_name)
+      @ps.uniq_vals(rv_name)
     end
   end
 
