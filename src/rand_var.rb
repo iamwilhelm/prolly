@@ -80,8 +80,14 @@ class RandVar
   end
 
   # P(color=green | size)
+  # TODO not tested
   def prob_rv_eq_gv
-    # NOT USED
+    rkey = @rv.keys.first
+    rval = @rv[rkey]
+
+    numer = @pspace.count(rkey, rval)
+    denom = @pspace.count(@gv)
+
   end
 
   # P(color) = [P(color=green), P(color=blue)]
@@ -108,12 +114,13 @@ class RandVar
   end
 
   # P(color | size) =
-  #   [P(color | size=small), P(color | size=???)]
+  #   [P(color=green | size), P(color=blue | size)]
+  # TODO not tested
   def prob_rv_gv
     distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
       #puts "rv | gv : #{@rv.to_s} | #{@gv.to_s}"
 
-      [rv_val, PSpace.rv(@rv.to_sym).given(@gv.to_sym).prob]
+      [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(@gv.to_sym).prob]
     end
     Hash[*distr]
   end
@@ -122,7 +129,6 @@ class RandVar
   # If it did, I'm not sure what H(color=green) means at all.
   def entropy
     if @rv.class == Hash
-      raise "H(color=green) not implemented"
 
       if @gv.empty?
         entropy_rv_eq
@@ -147,10 +153,14 @@ class RandVar
 
   # H(color=green)
   def entropy_rv_eq
+    raise "H(color=green) not implemented"
   end
 
   # H(color=green | size=small)
+  # TODO does this make sense when given rv is specified? I don't think so...
   def entropy_rv_eq_gv_eq
+    raise "H(color=green | size=small) not implemented"
+
     rkey = @rv.keys.first
     rval = @rv[rkey]
 
@@ -170,11 +180,10 @@ class RandVar
 
   # H(color=green | size)
   def entropy_rv_eq_gv
-    if @rv.class == Hash
-      rkey = @rv.keys.first
-      rval = @rv[rkey]
-      # puts "H(#{rkey}) = #{rval} | #{@gv}) ="
-    end
+    raise "not implemented"
+    rkey = @rv.keys.first
+    rval = @rv[rkey]
+    # puts "H(#{rkey}) = #{rval} | #{@gv}) ="
 
     @pspace.uniq_vals(@gv).inject(0) do |t, gval|
       pn = PSpace.rv(@gv.to_sym => gval).prob
@@ -204,15 +213,15 @@ class RandVar
     gkey = @gv.keys.first
     gval = @gv[gkey]
 
-    # puts "H(#{@rv} | #{gkey} = #{gval}) ="
+    #puts "H(#{@rv} | #{gkey} = #{gval}) ="
 
     distr = prob
     distr.inject(0) do |t, kv|
       name, pn = kv
-      # puts "  P(#{@rv} = #{name} | #{gkey} = #{gval}) * log P(#{@rv} = #{name} | #{gkey} = #{gval}) +"
+      #puts "  P(#{@rv} = #{name} | #{gkey} = #{gval})(#{pn}) * log P(#{@rv} = #{name} | #{gkey} = #{gval})(#{(pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)}) +"
       t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
     end.tap { |val|
-      # puts "  = #{val}"
+      #puts "  = #{val}"
     }
   end
 
@@ -220,7 +229,13 @@ class RandVar
   def entropy_rv_gv
     # puts "H(#{@rv} | #{@gv}) ="
 
-    entropy_rv_eq_gv.tap { |val|
+    @pspace.uniq_vals(@gv).inject(0) do |t, gval|
+      pn = PSpace.rv(@gv.to_sym => gval).prob
+      hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
+
+      # puts "  P(#{@gv} = #{gval}) * H(#{@rv} | #{@gv}=#{gval}) (#{pn * hn}) +"
+      t += pn * hn
+    end.tap { |val|
       # puts "  = #{val}"
     }
   end
@@ -228,16 +243,12 @@ class RandVar
   # need to always be I(Y | X)
   def infogain
     raise "Need given var" if @gv.empty?
-    raise "Need unspecified rand var" if @rv.class == Hash
-    if @gv.class == Hash
-      #gkey = @gv.keys.first
-      #gval = @gv[gkey]
-      #puts "I(#{@rv} | #{gkey} = #{gval})"
-      #PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(gkey => gval).entropy
-    else
-      # puts "I(#{@rv} | #{@gv})"
-      PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
-    end
+    raise "Need unspecified given var" if @gv.class == Hash
+
+    #raise "Need unspecified rand var" if @rv.class == Hash
+
+    # puts "I(#{@rv} | #{@gv})"
+    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
   end
 
   def infogain_rv_eq
