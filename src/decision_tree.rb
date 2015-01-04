@@ -47,6 +47,7 @@ module DecisionTree
       tkey, tval = split_rv(rv_target)
       rvs = ::PSpace.rv.reject { |rv| rv == tkey }
 
+      # FIXME 2nd arg should be an empty list
       @tree = learn_helper(rv_target, rv_target, rvs, &block)
 
       #result = RubyProf.stop
@@ -54,15 +55,17 @@ module DecisionTree
       #printer.print(:path => "profile", :profile => "profile")
     end
 
+    # FIXME rv_parent should keep a list of rvs in use in this tree path
     def learn_helper(rv_target, rv_parent, rvs, &block)
       tkey, tval = split_rv(rv_target)
       pkey, pval = split_rv(rv_parent)
 
       # calculate all gains for remaining rand vars
-      gains = rvs.reject do |rkey|
-        tkey == rkey or !block.call(rkey)
-      end.map do |rkey|
-        [ rkey, ::PSpace.rv(tkey).given(rkey).infogain ]
+      gains = rvs.reject do |key|
+        !block.call(key)
+      end.map do |key|
+        # FIXME given key should use rv_parents
+        [ key, ::PSpace.rv(tkey).given(key).infogain ]
       end
       putss rvs, "Gains: #{gains.to_s}"
 
@@ -70,12 +73,14 @@ module DecisionTree
       # use the rkey and remove it from list of candidate rvs
       rkey, _ = gains.max { |a, b| a[1] <=> b[1] }
       gains.delete_if { |ig| ig[0] == rkey }
+      # FIXME push rkey into parent_rvs
 
       # create node to attach to parent node
       putss rvs, "Using :#{rkey} for node with parent :#{pkey}"
       node = Node.new(rkey)
 
       # base case 1
+      # TODO rkey should be rv_parents
       ent = ::PSpace.rv(tkey).given(rkey).entropy
       if ent == 0.0
         putss rvs,  "  Leaf node(#{rkey} = #{r_val}) : Base Case 1"
@@ -89,10 +94,10 @@ module DecisionTree
       end
 
       # create a child node for every value of selected rkey
-      ::PSpace.uniq_vals(rkey).each do |r_val|
-        putss rvs, "Creating child(#{rkey} = #{r_val})"
+      ::PSpace.uniq_vals(rkey).each do |rval|
+        putss rvs, "Creating child node for #{rkey} = #{rval}"
         child_node = learn_helper(rv_target, rkey, gains.map { |g| g[0] }, &block)
-        node.add(r_val, child_node)
+        node.add(rval, child_node)
       end
 
       puts
@@ -160,11 +165,11 @@ dt.learn(:income) do |rv|
   if rv == :age
     false
   elsif rv == :workclass
-    false
+    true
   elsif rv == :fnlwgt
     false
   elsif rv == :education
-    false
+    true
   elsif rv == :education_num
     false
   elsif rv == :marital_status
