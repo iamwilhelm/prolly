@@ -47,56 +47,57 @@ module DecisionTree
       tkey, tval = split_rv(rv_target)
       rvs = ::PSpace.rv.reject { |rv| rv == tkey }
 
-      # FIXME 2nd arg should be an empty list
-      @tree = learn_helper(rv_target, rv_target, rvs, &block)
+      @tree = create_node(rv_target, [], rvs, &block)
 
       #result = RubyProf.stop
       #printer = RubyProf::MultiPrinter.new(result)
       #printer.print(:path => "profile", :profile => "profile")
     end
 
-    # FIXME rv_parent should keep a list of rvs in use in this tree path
-    def learn_helper(rv_target, rv_parent, rvs, &block)
+    def create_node(rv_target, rv_parents, rand_vars, &block)
       tkey, tval = split_rv(rv_target)
-      pkey, pval = split_rv(rv_parent)
+      #pkey, pval = split_rv(rv_parent)
 
       # calculate all gains for remaining rand vars
-      gains = rvs.reject do |key|
+      gains = rand_vars.reject do |key|
         !block.call(key)
       end.map do |key|
         # FIXME given key should use rv_parents
         [ key, ::PSpace.rv(tkey).given(key).infogain ]
+
+        #[ key, ::PSpace.rv(tkey).given(rv_parents, key).infogain ]
       end
-      putss rvs, "Gains: #{gains.to_s}"
+      putss rand_vars, "Gains: #{gains.to_s}"
 
       # find the next RV
-      # use the rkey and remove it from list of candidate rvs
+      # use the rkey and remove it from list of candidate rand_vars
       rkey, _ = gains.max { |a, b| a[1] <=> b[1] }
       gains.delete_if { |ig| ig[0] == rkey }
-      # FIXME push rkey into parent_rvs
+      new_rv_parents = rv_parents.clone + [rkey]
+      new_rand_vars = gains.map { |g| g[0] }
 
       # create node to attach to parent node
-      putss rvs, "Using :#{rkey} for node with parent :#{pkey}"
+      putss rand_vars, "Using :#{rkey} for node with parents :#{rv_parents}"
       node = Node.new(rkey)
 
       # base case 1
       # TODO rkey should be rv_parents
       ent = ::PSpace.rv(tkey).given(rkey).entropy
       if ent == 0.0
-        putss rvs,  "  Leaf node(#{rkey} = #{r_val}) : Base Case 1"
+        putss rand_vars,  "  Leaf node(#{rkey}) : Base Case 1"
         return node
       end
 
       # base case 2
       if gains.all? { |ig| ig[1] == 0.0 }
-        putss rvs, "  Leaf node(#{rkey}) : Base Case 2"
+        putss rand_vars, "  Leaf node(#{rkey}) : Base Case 2"
         return node
       end
 
       # create a child node for every value of selected rkey
       ::PSpace.uniq_vals(rkey).each do |rval|
-        putss rvs, "Creating child node for #{rkey} = #{rval}"
-        child_node = learn_helper(rv_target, rkey, gains.map { |g| g[0] }, &block)
+        putss rand_vars, "Creating child node for #{rkey} = #{rval}"
+        child_node = create_node(rv_target, new_rv_parents, new_rand_vars, &block)
         node.add(rval, child_node)
       end
 
