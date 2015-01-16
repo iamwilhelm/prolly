@@ -2,25 +2,53 @@ class RandVar
 
   def initialize(pspace, rand_vars)
     @pspace = pspace
+
     @rv = rand_vars
-    @gv = []
+
+    @uspec_gv = []
+    @spec_gv = []
   end
 
-  def given(rand_vars)
-    @gv = rand_vars
+  # parses rand_var arguments
+  #
+  # random variable are passed in as arguments to a method. It can take the format of:
+  #
+  # :size
+  #
+  # { size: :large, color: :green }
+  #
+  # [ :size, { color: :green, texture: :rough } ]
+  #
+  def parse(rand_vars)
+    if rand_vars.kind_of?(Hash)
+      specified_rvs = rand_vars
+      unspecified_rvs = []
+    elsif rand_vars.kind_of?(Array)
+      specified_rvs, unspecified_rvs = rand_vars.partition { |e| e.kind_of?(Hash) }
+      specified_rvs = specified_rvs.inject({}) { |t, e| t.merge(e) }
+    else # if it's a symbol
+      specified_rvs = []
+      unspecified_rvs = [rand_vars]
+    end
+
+    return unspecified_rvs, specified_rvs
+  end
+
+  def given(*rand_vars)
+    @uspec_gv, @spec_gv = parse(rand_vars)
+
     return self
   end
 
   def count
     if @rv.class == Hash
       # FIXME need to support multiple variables
-      rkey = @rv.keys.first
-      rval = @rv[rkey]
-      if @gv.empty?
+      rkey, rval = @rv.first
+
+      if @uspec_gv.empty? and @spec_gv.empty?
         @pspace.count(rkey, rval)
       else
-        gkey = @gv.keys.first
-        gval = @gv[gkey]
+        gkey, gval = @spec_gv.first
         @pspace.count2(rkey, rval, gkey, gval)
       end
     else
@@ -34,7 +62,7 @@ class RandVar
     #puts "P(#{@rv} | #{@gv})"
     if @rv.class == Hash
 
-      if @gv.empty?
+      if @uspec_gv.empty? and @spec_gv.empty?
         prob_rv_eq
       else
         prob_rv_eq_gv_eq
@@ -43,9 +71,9 @@ class RandVar
     else
       #puts "distr : #{@rv.to_s} : #{@gv.to_s}"
 
-      if @gv.empty?
+      if @uspec_gv.empty? and @spec_gv.empty?
         prob_rv
-      elsif @gv.class == Hash
+      elsif not @spec_gv.empty?
         prob_rv_gv_eq
       else
         prob_rv_gv
@@ -56,8 +84,7 @@ class RandVar
 
   # P(color=green)
   def prob_rv_eq
-    rkey = @rv.keys.first
-    rval = @rv[rkey]
+    rkey, rval = @rv.first
 
     numer = self.count()
     denom = @pspace.count(rkey, nil)
@@ -67,11 +94,9 @@ class RandVar
 
   # P(color=green | size=small)
   def prob_rv_eq_gv_eq
-    rkey = @rv.keys.first
-    rval = @rv[rkey]
+    rkey, rval = @rv.first
 
-    gkey = @gv.keys.first
-    gval = @gv[gkey]
+    gkey, gval = @spec_gv.first
 
     numer = @pspace.count2(rkey, rval, gkey, gval)
     denom = @pspace.count(gkey, gval)
@@ -82,12 +107,10 @@ class RandVar
   # P(color=green | size)
   # TODO not tested
   def prob_rv_eq_gv
-    rkey = @rv.keys.first
-    rval = @rv[rkey]
+    rkey, rval = @rv.first
 
     numer = @pspace.count(rkey, rval)
-    denom = @pspace.count(@gv)
-
+    denom = @pspace.count(@uspec_gv)
   end
 
   # P(color) = [P(color=green), P(color=blue)]
@@ -103,8 +126,7 @@ class RandVar
   #   [P(color=green | size=small), P(color=blue | size=small)]
   def prob_rv_gv_eq
     distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-      gkey = @gv.keys.first
-      gval = @gv[gkey]
+      gkey, gval = @spec_gv.first
 
       #puts "rv | gv = #gv : #{@rv.to_s} | #{@gv.to_s}"
 
@@ -117,6 +139,8 @@ class RandVar
   #   [P(color=green | size), P(color=blue | size)]
   # TODO not tested
   def prob_rv_gv
+    @gv = @uspec_gv.first
+
     distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
       #puts "rv | gv : #{@rv.to_s} | #{@gv.to_s}"
 
@@ -130,19 +154,21 @@ class RandVar
   def entropy
     if @rv.class == Hash
 
-      if @gv.empty?
+      if @uspec_gv.empty? and @spec_gv.empty?
+        # These will raise exceptions
         entropy_rv_eq
       else
-        #entropy_rv_eq_gv_eq
-        #entropy_rv_eq_gv
+        # These will raise exceptions
+        entropy_rv_eq_gv_eq
+        entropy_rv_eq_gv
       end
 
     else
       #puts "H(#{@rv} | #{@gv})"
 
-      if @gv.empty?
+      if @uspec_gv.empty? and @spec_gv.empty?
         entropy_rv
-      elsif @gv.class == Hash
+      elsif not @spec_gv.empty?
         entropy_rv_gv_eq
       else 
         entropy_rv_gv
@@ -161,11 +187,9 @@ class RandVar
   def entropy_rv_eq_gv_eq
     raise "H(color=green | size=small) not implemented"
 
-    rkey = @rv.keys.first
-    rval = @rv[rkey]
+    rkey, rval = @rv.first
 
-    gkey = @gv.keys.first
-    gval = @gv[gkey]
+    gkey, gval = @gv.first
     # puts "H(#{@rv} = | #{gkey} = #{gval}) ="
 
     distr = prob
@@ -179,10 +203,10 @@ class RandVar
   end
 
   # H(color=green | size)
+  # TODO might not make sense when rv is specified
   def entropy_rv_eq_gv
-    raise "not implemented"
-    rkey = @rv.keys.first
-    rval = @rv[rkey]
+    raise "H(color=green | size) not implemented"
+    rkey, rval = @rv.first
     # puts "H(#{rkey}) = #{rval} | #{@gv}) ="
 
     @pspace.uniq_vals(@gv).inject(0) do |t, gval|
@@ -210,8 +234,7 @@ class RandVar
 
   # H(color | size=small)
   def entropy_rv_gv_eq
-    gkey = @gv.keys.first
-    gval = @gv[gkey]
+    gkey, gval = @spec_gv.first
 
     #puts "H(#{@rv} | #{gkey} = #{gval}) ="
 
@@ -229,6 +252,8 @@ class RandVar
   def entropy_rv_gv
     # puts "H(#{@rv} | #{@gv}) ="
 
+    @gv = @uspec_gv.first
+
     @pspace.uniq_vals(@gv).inject(0) do |t, gval|
       pn = PSpace.rv(@gv.to_sym => gval).prob
       hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
@@ -242,31 +267,14 @@ class RandVar
 
   # need to always be I(Y | X)
   def infogain
-    raise "Need given var" if @gv.empty?
-    raise "Need unspecified given var" if @gv.class == Hash
+    raise "Need given var" if @uspec_gv.empty? and @spec_gv.empty?
+    raise "Need unspecified given var" if @uspec_gv.empty?
+    raise "Need unspecified rand var" if @rv.class == Hash
 
-    #raise "Need unspecified rand var" if @rv.class == Hash
+    @gv = @uspec_gv.first
 
     # puts "I(#{@rv} | #{@gv})"
     PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
-  end
-
-  def infogain_rv_eq
-  end
-
-  def infogain_rv_eq_gv_eq
-  end
-
-  def infogain_rv_eq_gv
-  end
-
-  def infogain_rv
-  end
-
-  def infogain_rv_gv_eq
-  end
-
-  def infogain_rv_gv
   end
 
 end

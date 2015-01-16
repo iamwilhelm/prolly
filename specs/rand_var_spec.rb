@@ -134,7 +134,8 @@ describe RandVar do
     end
 
     context "when color | size" do
-      it "I(color | size) = H(color) - H(color | size)" do
+      # I(color | size) = H(color) - H(color | size)
+      it "is the infogain(color | size)" do
         result = PSpace.rv(:color).given(:size).infogain
         expect(result).to be_within(0.001).of(
           PSpace.rv(:color).entropy - PSpace.rv(:color).given(:size).entropy
