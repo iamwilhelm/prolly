@@ -1,12 +1,12 @@
 class RandVar
 
-  def initialize(pspace, rand_vars)
+  def initialize(pspace, *rand_vars)
     @pspace = pspace
 
-    @rv = rand_vars
+    @uspec_rv, @spec_rv = parse(rand_vars)
 
     @uspec_gv = []
-    @spec_gv = []
+    @spec_gv = {}
   end
 
   # parses rand_var arguments
@@ -41,9 +41,9 @@ class RandVar
   end
 
   def count
-    if @rv.class == Hash
+    if !@spec_rv.empty?
       # FIXME need to support multiple variables
-      rkey, rval = @rv.first
+      rkey, rval = @spec_rv.first
 
       if @uspec_gv.empty? and @spec_gv.empty?
         @pspace.count(rkey, rval)
@@ -52,7 +52,7 @@ class RandVar
         @pspace.count2(rkey, rval, gkey, gval)
       end
     else
-      rkey = @rv
+      rkey = @uspec_rv.first
       @pspace.count(rkey, nil)
     end
   end
@@ -60,7 +60,7 @@ class RandVar
 
   def prob
     #puts "P(#{@rv} | #{@gv})"
-    if @rv.class == Hash
+    if !@spec_rv.empty?
 
       if @uspec_gv.empty? and @spec_gv.empty?
         prob_rv_eq
@@ -84,7 +84,7 @@ class RandVar
 
   # P(color=green)
   def prob_rv_eq
-    rkey, rval = @rv.first
+    rkey, rval = @spec_rv.first
 
     numer = self.count()
     denom = @pspace.count(rkey, nil)
@@ -94,8 +94,7 @@ class RandVar
 
   # P(color=green | size=small)
   def prob_rv_eq_gv_eq
-    rkey, rval = @rv.first
-
+    rkey, rval = @spec_rv.first
     gkey, gval = @spec_gv.first
 
     numer = @pspace.count2(rkey, rval, gkey, gval)
@@ -107,7 +106,7 @@ class RandVar
   # P(color=green | size)
   # TODO not tested
   def prob_rv_eq_gv
-    rkey, rval = @rv.first
+    rkey, rval = @spec_rv.first
 
     numer = @pspace.count(rkey, rval)
     denom = @pspace.count(@uspec_gv)
@@ -115,9 +114,10 @@ class RandVar
 
   # P(color) = [P(color=green), P(color=blue)]
   def prob_rv
-    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-      #puts "rv : #{@rv.to_s} | #{@gv.to_s}"
-      [rv_val, PSpace.rv(@rv.to_sym => rv_val).prob]
+    rv = @uspec_rv.first
+    distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
+      #puts "rv : #{rv.to_s} | #{@gv.to_s}"
+      [rv_val, PSpace.rv(rv.to_sym => rv_val).prob]
     end
     Hash[*distr]
   end
@@ -125,12 +125,13 @@ class RandVar
   # P(color | size=small) =
   #   [P(color=green | size=small), P(color=blue | size=small)]
   def prob_rv_gv_eq
-    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
+    rv = @uspec_rv.first
+    distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
       gkey, gval = @spec_gv.first
 
-      #puts "rv | gv = #gv : #{@rv.to_s} | #{@gv.to_s}"
+      #puts "rv | gv = #gv : #{rv.to_s} | #{@gv.to_s}"
 
-      [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
+      [rv_val, PSpace.rv(rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
     end
     Hash[*distr]
   end
@@ -139,12 +140,13 @@ class RandVar
   #   [P(color=green | size), P(color=blue | size)]
   # TODO not tested
   def prob_rv_gv
-    @gv = @uspec_gv.first
+    rv = @uspec_rv.first
+    gv = @uspec_gv.first
 
-    distr = @pspace.uniq_vals(@rv).flat_map do |rv_val|
-      #puts "rv | gv : #{@rv.to_s} | #{@gv.to_s}"
+    distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
+      #puts "rv | gv : #{rv.to_s} | #{@gv.to_s}"
 
-      [rv_val, PSpace.rv(@rv.to_sym => rv_val).given(@gv.to_sym).prob]
+      [rv_val, PSpace.rv(rv.to_sym => rv_val).given(gv.to_sym).prob]
     end
     Hash[*distr]
   end
@@ -152,7 +154,7 @@ class RandVar
   # Entropy doesn't take hashes (for now?)
   # If it did, I'm not sure what H(color=green) means at all.
   def entropy
-    if @rv.class == Hash
+    if !@spec_rv.empty?
 
       if @uspec_gv.empty? and @spec_gv.empty?
         # These will raise exceptions
@@ -220,6 +222,7 @@ class RandVar
 
   # H(color)
   def entropy_rv
+    #@rv = @unspec_rv.first
     # puts "H(#{@rv})"
 
     distr = prob
@@ -252,6 +255,7 @@ class RandVar
   def entropy_rv_gv
     # puts "H(#{@rv} | #{@gv}) ="
 
+    @rv = @uspec_rv.first
     # assumes only a single gv
     gv = @uspec_gv.first
 
@@ -273,7 +277,7 @@ class RandVar
     raise "Need unspecified rand var" if @rv.class == Hash
 
     # puts "I(#{@rv} | #{@gv})"
-    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(*@uspec_gv).entropy
+    PSpace.rv(*@uspec_rv).entropy - PSpace.rv(*@uspec_rv).given(*@uspec_gv).entropy
   end
 
 end
