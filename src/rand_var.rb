@@ -48,8 +48,7 @@ class RandVar
       if @uspec_gv.empty? and @spec_gv.empty?
         @pspace.count(rkey, rval)
       else
-        gkey, gval = @spec_gv.first
-        @pspace.count2(rkey, rval, gkey, gval)
+        @pspace.count2(rkey, rval, @spec_gv)
       end
     else
       rkey = @uspec_rv.first
@@ -97,7 +96,7 @@ class RandVar
     rkey, rval = @spec_rv.first
     gkey, gval = @spec_gv.first
 
-    numer = @pspace.count2(rkey, rval, gkey, gval)
+    numer = @pspace.count2(rkey, rval, @spec_gv)
     denom = @pspace.count(gkey, gval)
 
     return numer.to_f / denom

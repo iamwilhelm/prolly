@@ -45,15 +45,16 @@ class PSpace
 
   def count(name, val)
     if val.nil?
-      @stash["#{name}|#{val}"] ||= @data.count { |e| e.has_key?(name) }
+      @stash["#{name}=#{val}"] ||= @data.count { |e| e.has_key?(name) }
     else
-      @stash["#{name}|#{val}"] ||= @data.count { |e| e[name] == val }
+      @stash["#{name}=#{val}"] ||= @data.count { |e| e[name] == val }
     end
   end
 
-  def count2(name1, val1, name2, val2)
-    @stash["#{name1}|#{val1} #{name2}|#{val2}"] ||= @data.count { |e|
-      e[name1] == val1 and e[name2] == val2
+  # gvs = Hash of specified given variables
+  def count2(name, val, spec_gv)
+    @stash["#{name}=#{val} #{spec_gv.to_s}"] ||= @data.count { |e|
+      e[name] == val and spec_gv.map { |gname, gval| e[gname] == gval }.all?
     }
   end
 
