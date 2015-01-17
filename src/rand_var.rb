@@ -46,13 +46,13 @@ class RandVar
       rkey, rval = @spec_rv.first
 
       if @uspec_gv.empty? and @spec_gv.empty?
-        @pspace.count(rkey, rval)
+        @pspace.count(@spec_rv)
       else
         @pspace.count2(rkey, rval, @spec_gv)
       end
     else
       rkey = @uspec_rv.first
-      @pspace.count(rkey, nil)
+      @pspace.count(@uspec_rv)
     end
   end
 
@@ -86,7 +86,7 @@ class RandVar
     rkey, rval = @spec_rv.first
 
     numer = self.count()
-    denom = @pspace.count(rkey, nil)
+    denom = @pspace.count([rkey])
 
     return numer.to_f / denom
   end
@@ -97,7 +97,7 @@ class RandVar
     gkey, gval = @spec_gv.first
 
     numer = @pspace.count2(rkey, rval, @spec_gv)
-    denom = @pspace.count(gkey, gval)
+    denom = @pspace.count(@spec_gv)
 
     return numer.to_f / denom
   end
@@ -107,7 +107,7 @@ class RandVar
   def prob_rv_eq_gv
     rkey, rval = @spec_rv.first
 
-    numer = @pspace.count(rkey, rval)
+    numer = @pspace.count(@spec_rv)
     denom = @pspace.count(@uspec_gv)
   end
 

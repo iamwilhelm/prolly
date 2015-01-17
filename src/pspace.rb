@@ -43,11 +43,15 @@ class PSpace
     @data << datum
   end
 
-  def count(name, val)
-    if val.nil?
-      @stash["#{name}=#{val}"] ||= @data.count { |e| e.has_key?(name) }
-    else
-      @stash["#{name}=#{val}"] ||= @data.count { |e| e[name] == val }
+  def count(rvs)
+    if rvs.kind_of?(Array)
+      @stash["#{rvs}"] ||= @data.count { |e|
+        rvs.all? { |rv| e.has_key?(rv) }
+      }
+    elsif rvs.kind_of?(Hash)
+      @stash["#{rvs}"] ||= @data.count { |e|
+        rvs.map { |rkey, rval| e[rkey] == rval }.all?
+      }
     end
   end
 
