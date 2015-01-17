@@ -51,7 +51,6 @@ class RandVar
         @pspace.count2(rkey, rval, @spec_gv)
       end
     else
-      rkey = @uspec_rv.first
       @pspace.count(@uspec_rv)
     end
   end
@@ -94,7 +93,6 @@ class RandVar
   # P(color=green | size=small)
   def prob_rv_eq_gv_eq
     rkey, rval = @spec_rv.first
-    gkey, gval = @spec_gv.first
 
     numer = @pspace.count2(rkey, rval, @spec_gv)
     denom = @pspace.count(@spec_gv)
@@ -105,8 +103,6 @@ class RandVar
   # P(color=green | size)
   # TODO not tested
   def prob_rv_eq_gv
-    rkey, rval = @spec_rv.first
-
     numer = @pspace.count(@spec_rv)
     denom = @pspace.count(@uspec_gv)
   end
@@ -187,47 +183,23 @@ class RandVar
   # TODO does this make sense when given rv is specified? I don't think so...
   def entropy_rv_eq_gv_eq
     raise "H(color=green | size=small) not implemented"
-
-    rkey, rval = @rv.first
-
-    gkey, gval = @gv.first
-    # puts "H(#{@rv} = | #{gkey} = #{gval}) ="
-
-    distr = prob
-    distr.inject(0) do |t, kv|
-      name, pn = kv
-      # puts "  P(#{@rv}=#{name}|#{gkey}=#{gval})*log P(#{@rv}=#{name}|#{gkey}=#{gval}) +"
-      t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
-    end.tap { |val|
-      # puts "  = #{val}"
-    }
   end
 
   # H(color=green | size)
   # TODO might not make sense when rv is specified
   def entropy_rv_eq_gv
     raise "H(color=green | size) not implemented"
-    rkey, rval = @rv.first
-    # puts "H(#{rkey}) = #{rval} | #{@gv}) ="
-
-    @pspace.uniq_vals(@gv).inject(0) do |t, gval|
-      pn = PSpace.rv(@gv.to_sym => gval).prob
-      hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
-
-      # puts "  P(#{@gv} = #{gval}) * H(#{@rv} | #{@gv}=#{gval}) (#{pn * hn}) +"
-      t += pn * hn
-    end
   end
 
   # H(color)
   def entropy_rv
-    #@rv = @unspec_rv.first
-    # puts "H(#{@rv})"
+    #rv = @unspec_rv.first
+    # puts "H(#{rv})"
 
     distr = prob
     distr.inject(0) do |t, kv|
       name, pn = kv
-      # puts "  P(#{@rv}=#{name}) * log P(#{@rv}=#{name}) + "
+      # puts "  P(#{rv}=#{name}) * log P(#{rv}=#{name}) + "
       t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
     end.tap { |val|
       # puts "  = #{val}"
@@ -236,14 +208,14 @@ class RandVar
 
   # H(color | size=small)
   def entropy_rv_gv_eq
-    gkey, gval = @spec_gv.first
-
-    #puts "H(#{@rv} | #{gkey} = #{gval}) ="
+    #puts "H(#{@uspec_rv} | #{@spec_gv.to_s}) ="
 
     distr = prob
     distr.inject(0) do |t, kv|
       name, pn = kv
-      #puts "  P(#{@rv} = #{name} | #{gkey} = #{gval})(#{pn}) * log P(#{@rv} = #{name} | #{gkey} = #{gval})(#{(pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)}) +"
+      #puts "  P(#{@uspec_rv} | #{@spec_gv})(#{pn}) *"
+      # + " log P(#{@uspec_rv} | #{@spec_gv})"
+      # + "(#{(pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)}) +"
       t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
     end.tap { |val|
       #puts "  = #{val}"
@@ -254,15 +226,14 @@ class RandVar
   def entropy_rv_gv
     # puts "H(#{@rv} | #{@gv}) ="
 
-    @rv = @uspec_rv.first
-    # assumes only a single gv
+    rv = @uspec_rv.first
     gv = @uspec_gv.first
 
     @pspace.uniq_vals(gv).inject(0) do |t, gval|
       pn = PSpace.rv(gv.to_sym => gval).prob
-      hn = PSpace.rv(@rv).given(gv.to_sym => gval).entropy
+      hn = PSpace.rv(rv).given(gv.to_sym => gval).entropy
 
-      # puts "  P(#{@gv} = #{gval}) * H(#{@rv} | #{@gv}=#{gval}) (#{pn * hn}) +"
+      # puts "  P(#{@gv} = #{gval}) * H(#{rv} | #{gv}=#{gval}) (#{pn * hn}) +"
       t += pn * hn
     end.tap { |val|
       # puts "  = #{val}"
