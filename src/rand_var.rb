@@ -252,11 +252,12 @@ class RandVar
   def entropy_rv_gv
     # puts "H(#{@rv} | #{@gv}) ="
 
-    @gv = @uspec_gv.first
+    # assumes only a single gv
+    gv = @uspec_gv.first
 
-    @pspace.uniq_vals(@gv).inject(0) do |t, gval|
-      pn = PSpace.rv(@gv.to_sym => gval).prob
-      hn = PSpace.rv(@rv).given(@gv.to_sym => gval).entropy
+    @pspace.uniq_vals(gv).inject(0) do |t, gval|
+      pn = PSpace.rv(gv.to_sym => gval).prob
+      hn = PSpace.rv(@rv).given(gv.to_sym => gval).entropy
 
       # puts "  P(#{@gv} = #{gval}) * H(#{@rv} | #{@gv}=#{gval}) (#{pn * hn}) +"
       t += pn * hn
@@ -271,10 +272,8 @@ class RandVar
     raise "Need unspecified given var" if @uspec_gv.empty?
     raise "Need unspecified rand var" if @rv.class == Hash
 
-    @gv = @uspec_gv.first
-
     # puts "I(#{@rv} | #{@gv})"
-    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(@gv).entropy
+    PSpace.rv(@rv).entropy - PSpace.rv(@rv).given(*@uspec_gv).entropy
   end
 
 end
