@@ -42,13 +42,10 @@ class RandVar
 
   def count
     if !@spec_rv.empty?
-      # FIXME need to support multiple variables
-      rkey, rval = @spec_rv.first
-
       if @uspec_gv.empty? and @spec_gv.empty?
         @pspace.count(@spec_rv)
       else
-        @pspace.count2(rkey, rval, @spec_gv)
+        @pspace.count(@spec_rv.merge(@spec_gv))
       end
     else
       @pspace.count(@uspec_rv)
@@ -92,9 +89,7 @@ class RandVar
 
   # P(color=green | size=small)
   def prob_rv_eq_gv_eq
-    rkey, rval = @spec_rv.first
-
-    numer = @pspace.count2(rkey, rval, @spec_gv)
+    numer = @pspace.count(@spec_rv.merge(@spec_gv))
     denom = @pspace.count(@spec_gv)
 
     return numer.to_f / denom

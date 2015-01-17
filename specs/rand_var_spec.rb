@@ -6,11 +6,11 @@ require "pspace"
 describe RandVar do
   let(:data) {
     [
-      { :color => :green, :size => :small },
-      { :color => :blue,  :size => :small },
-      { :color => :blue,  :size => :med },
-      { :color => :green, :size => :large },
-      { :color => :green, :size => :small },
+      { :color => :green, :size => :small, :texture => :smooth },
+      { :color => :blue,  :size => :small, :texture => :rough  },
+      { :color => :blue,  :size => :med,   :texture => :smooth },
+      { :color => :green, :size => :large, :texture => :rough  },
+      { :color => :green, :size => :small, :texture => :smooth },
     ]
   }
 
@@ -26,15 +26,51 @@ describe RandVar do
       end
     end
 
+    context "when counting color, size" do
+      it "is size of entire set with both attributes" do
+        expect(PSpace.rv(:color, :size).count).to eq(5)
+      end
+    end
+
     context "when counting color = green" do
-      it "is 3" do
+      it "is 3, number of rows with color = green" do
         expect(PSpace.rv(color: :green).count).to eq(3)
+      end
+    end
+
+    context "when counting color = green, size = small" do
+      it "is 2, number of rows with both color = green and size = small" do
+        expect(PSpace.rv(color: :green, size: :small).count).to eq(2)
       end
     end
 
     context "when counting color = green | size == small" do
       it "is 2" do
         expect(PSpace.rv(color: :green).given(size: :small).count).to eq(2)
+      end
+    end
+
+    context "when counting color = green, size = small | texture = smooth" do
+      it "is 2" do
+        expect(
+          PSpace.rv(color: :green).given(size: :small, texture: :smooth).count
+        ).to eq(2)
+      end
+    end
+
+    context "when counting color = blue | size = small, texture = rough" do
+      it "is 1" do
+        expect(
+          PSpace.rv(color: :blue).given(size: :small, texture: :rough).count
+        ).to eq(1)
+      end
+    end
+
+    context "when counting color = blue | size = small, texture = smooth" do
+      it "is 0" do
+        expect(
+          PSpace.rv(color: :blue).given(size: :small, texture: :smooth).count
+        ).to eq(0)
       end
     end
   end

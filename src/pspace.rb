@@ -55,13 +55,6 @@ class PSpace
     end
   end
 
-  # gvs = Hash of specified given variables
-  def count2(name, val, spec_gv)
-    @stash["#{name}=#{val} #{spec_gv.to_s}"] ||= @data.count { |e|
-      e[name] == val and spec_gv.map { |gname, gval| e[gname] == gval }.all?
-    }
-  end
-
   def uniq_vals(name)
     @uniq_vals[name] ||= @data.map { |li| li.has_key?(name) ? li[name] : nil }.uniq
   end
