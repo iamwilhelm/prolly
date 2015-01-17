@@ -80,23 +80,67 @@ describe RandVar do
       PSpace.import(data)
     end
 
-    context "when prob color" do
-      it "is the entire distribution as a hash" do
-        expect(PSpace.rv(:color).prob).to be_an_instance_of(Hash)
+    context "#prob_rv_eq" do
+      context "when prob color = green" do
+        it "is 3/5" do
+          expect(PSpace.rv(color: :green).prob).to be_within(0.001).of(3.0 / 5)
+        end
       end
 
-      it "is a distribution of blue = 2/5 and green = 3/5" do
-        result = PSpace.rv(:color).prob
-        expect(result.keys).to include(:blue)
-        expect(result[:blue]).to eql(2.0 / 5)
-        expect(result.keys).to include(:green)
-        expect(result[:green]).to eql(3.0 / 5)
+      context "when prob color = green, size = small" do
+        it "is 2/5" do
+          expect(
+            PSpace.rv(color: :green, size: :small).prob
+          ).to be_within(0.001).of(2.0 / 5)
+        end
       end
     end
 
-    context "when prob color = green" do
-      it "is 3/5" do
-        expect(PSpace.rv(color: :green).prob).to be_within(0.001).of(3.0 / 5)
+    context "#prob_rv_eq_gv_eq" do
+      context "when prob color = green | size == small" do
+        it "is 2/3" do
+          result = PSpace.rv(color: :green).given(size: :small).prob
+          expect(result).to be_within(0.001).of(2.0 / 3)
+        end
+      end
+
+      context "when prob color=green, size=small | texture=smooth" do
+        it "is 2/3" do
+          result = PSpace.rv(color: :green, size: :small).given(texture: :smooth).prob
+          expect(result).to be_within(0.001).of(2.0 / 3)
+        end
+      end
+
+      context "when prob color=green | size=small, texture=smooth" do
+        it "is 1.0" do
+          result = PSpace.rv(color: :green).given(size: :small, texture: :smooth).prob
+          expect(result).to be_within(0.001).of(1.0)
+        end
+      end
+    end
+
+    context "#prob_rv_eq_gv" do
+      context "when prob size=large | texture" do
+        it "is 1/5" do
+          result = PSpace.rv(size: :large).given(:texture).prob
+          expect(result).to be_within(0.001).of(1.0 / 5)
+        end
+      end
+    end
+
+    context "#prob_rv" do
+      context "when prob color" do
+        it "is the entire distribution as a hash" do
+          expect(PSpace.rv(:color).prob).to be_an_instance_of(Hash)
+        end
+
+        it "is a distribution of blue = 2/5 and green = 3/5" do
+          result = PSpace.rv(:color).prob
+          expect(result.keys).to include(:blue)
+          expect(result[:blue]).to eql(2.0 / 5)
+          expect(result.keys).to include(:green)
+          expect(result[:green]).to eql(3.0 / 5)
+        end
       end
     end
 
@@ -115,12 +159,6 @@ describe RandVar do
       end
     end
 
-    context "when prob color = green | size == small" do
-      it "is 2/3" do
-        result = PSpace.rv(color: :green).given(size: :small).prob
-        expect(result).to be_within(0.001).of(2.0 / 3)
-      end
-    end
 
     context "when prob color | size" do
       it "is ..." do

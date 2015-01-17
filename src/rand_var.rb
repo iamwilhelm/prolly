@@ -78,16 +78,17 @@ class RandVar
   end
 
   # P(color=green)
+  # P(color=green, size=small)
   def prob_rv_eq
-    rkey, rval = @spec_rv.first
-
     numer = self.count()
-    denom = @pspace.count([rkey])
+    denom = @pspace.count(@spec_rv.keys)
 
     return numer.to_f / denom
   end
 
   # P(color=green | size=small)
+  # P(color=green, size=small | texture=smooth)
+  # P(color=green | size=small, texture=smooth)
   def prob_rv_eq_gv_eq
     numer = @pspace.count(@spec_rv.merge(@spec_gv))
     denom = @pspace.count(@spec_gv)
@@ -96,13 +97,19 @@ class RandVar
   end
 
   # P(color=green | size)
-  # TODO not tested
+  #
+  # For now, this is like P(color=green)
   def prob_rv_eq_gv
     numer = @pspace.count(@spec_rv)
     denom = @pspace.count(@uspec_gv)
+
+    return numer.to_f / denom
   end
 
   # P(color) = [P(color=green), P(color=blue)]
+  #
+  # unsupported:
+  # P(color, size) = [every combo of color and size]
   def prob_rv
     rv = @uspec_rv.first
     distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
@@ -114,6 +121,10 @@ class RandVar
 
   # P(color | size=small) =
   #   [P(color=green | size=small), P(color=blue | size=small)]
+  #
+  # unsupported:
+  # P(color | size=small, texture=smooth) =
+  #   [P(every color | every combo of size and texture)]
   def prob_rv_gv_eq
     rv = @uspec_rv.first
     distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
