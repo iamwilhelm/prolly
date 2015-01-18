@@ -107,33 +107,26 @@ class RandVar
   end
 
   # P(color) = [P(color=green), P(color=blue)]
-  #
-  # unsupported:
   # P(color, size) = [every combo of color and size]
   def prob_rv
-    rv = @uspec_rv.first
-    distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
-      #puts "rv : #{rv.to_s} | #{@gv.to_s}"
-      [rv_val, PSpace.rv(rv.to_sym => rv_val).prob]
+    distr = ::PSpace.uniq_vals(@uspec_rv).flat_map do |rv_vals|
+      spec_rv = Hash[*@uspec_rv.zip(rv_vals).flatten]
+      [rv_vals, PSpace.rv(spec_rv).prob]
     end
+
     Hash[*distr]
   end
 
   # P(color | size=small) =
   #   [P(color=green | size=small), P(color=blue | size=small)]
-  #
-  # unsupported:
   # P(color | size=small, texture=smooth) =
-  #   [P(every color | every combo of size and texture)]
+  #   [P(every color | size=small, texture=smooth)]
   def prob_rv_gv_eq
-    rv = @uspec_rv.first
-    distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
-      gkey, gval = @spec_gv.first
-
-      #puts "rv | gv = #gv : #{rv.to_s} | #{@gv.to_s}"
-
-      [rv_val, PSpace.rv(rv.to_sym => rv_val).given(gkey.to_sym => gval).prob]
+    distr = ::PSpace.uniq_vals(@uspec_rv).flat_map do |rv_vals|
+      spec_rv = Hash[*@uspec_rv.zip(rv_vals).flatten]
+      [rv_vals, PSpace.rv(spec_rv).given(@spec_gv).prob]
     end
+
     Hash[*distr]
   end
 

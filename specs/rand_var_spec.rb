@@ -80,7 +80,7 @@ describe RandVar do
       PSpace.import(data)
     end
 
-    context "#prob_rv_eq" do
+    describe "#prob_rv_eq" do
       context "when prob color = green" do
         it "is 3/5" do
           expect(PSpace.rv(color: :green).prob).to be_within(0.001).of(3.0 / 5)
@@ -96,7 +96,7 @@ describe RandVar do
       end
     end
 
-    context "#prob_rv_eq_gv_eq" do
+    describe "#prob_rv_eq_gv_eq" do
       context "when prob color = green | size == small" do
         it "is 2/3" do
           result = PSpace.rv(color: :green).given(size: :small).prob
@@ -119,7 +119,7 @@ describe RandVar do
       end
     end
 
-    context "#prob_rv_eq_gv" do
+    describe "#prob_rv_eq_gv" do
       context "when prob size=large | texture" do
         it "is 1/5" do
           result = PSpace.rv(size: :large).given(:texture).prob
@@ -128,43 +128,103 @@ describe RandVar do
       end
     end
 
-    context "#prob_rv" do
+    describe "#prob_rv" do
       context "when prob color" do
         it "is the entire distribution as a hash" do
-          expect(PSpace.rv(:color).prob).to be_an_instance_of(Hash)
+          result = PSpace.rv(:color).prob
+          expect(result).to be_an_instance_of(Hash)
+          expect(result.keys).to include([:blue])
+          expect(result.keys).to include([:green])
+        end
+
+        it "has probs that sum to 1" do
+          result = PSpace.rv(:color).prob
+          sum = result.values.inject(0) { |t,e| t += e }
+          expect(sum).to eq(1.0)
         end
 
         it "is a distribution of blue = 2/5 and green = 3/5" do
           result = PSpace.rv(:color).prob
-          expect(result.keys).to include(:blue)
-          expect(result[:blue]).to eql(2.0 / 5)
-          expect(result.keys).to include(:green)
-          expect(result[:green]).to eql(3.0 / 5)
+          expect(result).to be_an_instance_of(Hash)
+          expect(result[[:blue]]).to eql(2.0 / 5)
+          expect(result[[:green]]).to eql(3.0 / 5)
         end
       end
 
       context "when prob color, size" do
-        it "is a distribution"
+        it "is a distribution" do
+          result = PSpace.rv(:color, :size).prob
+          expect(result.keys).to include([:green, :small])
+          expect(result.keys).to include([:green, :med])
+          expect(result.keys).to include([:green, :large])
+          expect(result.keys).to include([:blue , :small])
+          expect(result.keys).to include([:blue , :med])
+          expect(result.keys).to include([:blue , :large])
+        end
+
+        it "has probs that sum to 1" do
+          result = PSpace.rv(:color, :size).prob
+          sum = result.values.inject(0) { |t,e| t += e }
+          expect(sum).to eq(1.0)
+        end
+
+        it "is a distribution of color and size" do
+          result = PSpace.rv(:color, :size).prob
+          expect(result[[:green, :small]]).to eql(2.0 / 5)
+          expect(result[[:green, :med  ]]).to eql(0.0 / 5)
+          expect(result[[:green, :large]]).to eql(1.0 / 5)
+          expect(result[[:blue , :small]]).to eql(1.0 / 5)
+          expect(result[[:blue , :med  ]]).to eql(1.0 / 5)
+          expect(result[[:blue , :large]]).to eql(0.0 / 5)
+        end
       end
     end
 
-    context "when prob color | size == small" do
-      it "is a distribution" do
-        result = PSpace.rv(:color).given(size: :small).prob
-        expect(result).to be_an_instance_of(Hash)
+    describe "#prob_rv_gv_eq" do
+      context "when prob color | size = small" do
+        it "is a distribution" do
+          result = PSpace.rv(:color).given(size: :small).prob
+          expect(result).to be_an_instance_of(Hash)
+          expect(result.keys).to include([:blue])
+          expect(result.keys).to include([:green])
+        end
+
+        it "has probs that sum to 1" do
+          result = PSpace.rv(:color).given(size: :small).prob
+          sum = result.values.inject(0) { |t,e| t += e }
+          expect(sum).to eq(1.0)
+        end
+
+        it "is a distribution of blue = 1/3, green = 2/3" do
+          result = PSpace.rv(:color).given(size: :small).prob
+          expect(result[[:blue]]).to eql(1.0 / 3)
+          expect(result[[:green]]).to eql(2.0 / 3)
+        end
       end
 
-      it "is a distribution of blue = 1/3, green = 2/3" do
-        result = PSpace.rv(:color).given(size: :small).prob
-        expect(result.keys).to include(:blue)
-        expect(result[:blue]).to eql(1.0 / 3)
-        expect(result.keys).to include(:green)
-        expect(result[:green]).to eql(2.0 / 3)
+      context "when prob color | size = small, texture = smooth" do
+        it "is a distribution" do
+          result = PSpace.rv(:color).given(size: :small, texture: :smooth).prob
+          expect(result).to be_an_instance_of(Hash)
+          expect(result.keys).to include([:blue])
+          expect(result.keys).to include([:green])
+        end
+
+        it "has probs that sum to 1" do
+          result = PSpace.rv(:color).given(size: :small, texture: :smooth).prob
+          sum = result.values.inject(0) { |t,e| t += e }
+          expect(sum).to eq(1.0)
+        end
+
+        it "is a distribution of blue and green" do
+          result = PSpace.rv(:color).given(size: :small, texture: :smooth).prob
+          expect(result[[:blue]]).to eql(0.0 / 2)
+          expect(result[[:green]]).to eql(2.0 / 2)
+        end
       end
     end
 
-
-    context "when prob color | size" do
+    context "when prob color = green | size = small" do
       it "is ..." do
         #result = PSpace.rv(:color).given(:size).prob
       end
