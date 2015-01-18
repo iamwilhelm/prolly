@@ -142,6 +142,10 @@ describe RandVar do
           expect(result[:green]).to eql(3.0 / 5)
         end
       end
+
+      context "when prob color, size" do
+        it "is a distribution"
+      end
     end
 
     context "when prob color | size == small" do
@@ -215,6 +219,24 @@ describe RandVar do
           PSpace.rv(:color).entropy - PSpace.rv(:color).given(:size).entropy
         )
       end
+    end
+
+    context "when color | size = green, weight" do
+
+      # I(color | size = green) =
+      #   H(color | size = green) - H(color | size = green, weight)"
+      it "is infogain(color | size = green, weight)" do
+        #result = PSpace.rv(:color).given(:weight, size: :green)
+      end
+
+    end
+
+    context "when color | size = green, texture = rough, weight)" do
+
+      it "is infogain(color | size = green, texture = rough, weight)" do
+        #result = PSpace.rv(:color)
+      end
+
     end
 
   end

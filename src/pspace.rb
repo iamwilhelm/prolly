@@ -24,8 +24,22 @@ class PSpace
       @ps.stash
     end
 
-    def uniq_vals(rv_name)
-      @ps.uniq_vals(rv_name)
+    # unique values for a random variable.
+    #
+    # If there are multiple random variables, then we get combinations of the unique
+    # values of the random variables
+    def uniq_vals(uspec_rvs)
+
+      def combo(list_of_vals)
+        if list_of_vals.length == 1
+          list_of_vals.first.map { |e| [e] }
+        else
+          combinations = combo(list_of_vals[1..-1])
+          list_of_vals.first.flat_map { |val| combinations.map { |e| [val] + e } }
+        end
+      end
+
+      combo(uspec_rvs.map { |uspec_rv| @ps.uniq_vals(uspec_rv) })
     end
   end
 
