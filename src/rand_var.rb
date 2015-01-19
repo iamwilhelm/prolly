@@ -149,23 +149,12 @@ class RandVar
   # If it did, I'm not sure what H(color=green) means at all.
   def entropy
     if !@spec_rv.empty?
-
-      if @uspec_gv.empty? and @spec_gv.empty?
-        # These will raise exceptions
-        entropy_rv_eq
-      else
-        # These will raise exceptions
-        entropy_rv_eq_gv_eq
-        entropy_rv_eq_gv
-      end
-
+      raise "Cannot use entropy with specified random variables"
     else
       #puts "H(#{@rv} | #{@gv})"
 
-      if @uspec_gv.empty? and @spec_gv.empty?
+      if @uspec_gv.empty?# and @spec_gv.empty?
         entropy_rv
-      elsif not @spec_gv.empty?
-        entropy_rv_gv_eq
       else 
         entropy_rv_gv
       end
@@ -173,73 +162,39 @@ class RandVar
     end
   end
 
-  # H(color=green)
-  def entropy_rv_eq
-    raise "H(color=green) not implemented"
-  end
-
-  # H(color=green | size=small)
-  # TODO does this make sense when given rv is specified? I don't think so...
-  def entropy_rv_eq_gv_eq
-    raise "H(color=green | size=small) not implemented"
-  end
-
-  # H(color=green | size)
-  # TODO might not make sense when rv is specified
-  def entropy_rv_eq_gv
-    raise "H(color=green | size) not implemented"
-  end
-
   # H(color)
-  def entropy_rv
-    #rv = @unspec_rv.first
-    # puts "H(#{rv})"
-
-    distr = prob
-    distr.inject(0) do |t, kv|
-      name, pn = kv
-      # puts "  P(#{rv}=#{name}) * log P(#{rv}=#{name}) + "
-      t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
-    end.tap { |val|
-      # puts "  = #{val}"
-    }
-  end
-
+  # H(color, size)
   # H(color | size=small)
-  def entropy_rv_gv_eq
-    #puts "H(#{@uspec_rv} | #{@spec_gv.to_s}) ="
-
+  # H(color, size | texture=smooth)
+  # H(color | size=small, texture=smooth)
+  def entropy_rv
     distr = prob
     distr.inject(0) do |t, kv|
       name, pn = kv
-      #puts "  P(#{@uspec_rv} | #{@spec_gv})(#{pn}) *"
-      # + " log P(#{@uspec_rv} | #{@spec_gv})"
-      # + "(#{(pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)}) +"
       t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
-    end.tap { |val|
-      #puts "  = #{val}"
-    }
+    end
   end
 
   # H(color | size)
+  # H(color, weight | size, texture = smooth)
+  # H(color | size, texture = smooth)
   def entropy_rv_gv
-    # puts "H(#{@rv} | #{@gv}) ="
+    ::PSpace.uniq_vals(@uspec_gv).inject(0) do |t, gv_vals|
+      uspec_gv_speced = Hash[*@uspec_gv.zip(gv_vals).flatten]
+      gv = @spec_gv.merge(uspec_gv_speced)
 
-    rv = @uspec_rv.first
-    gv = @uspec_gv.first
+      pn = PSpace.rv(gv).given(@spec_gv).prob
+      hn = PSpace.rv(*@uspec_rv).given(gv).entropy
 
-    @pspace.uniq_vals(gv).inject(0) do |t, gval|
-      pn = PSpace.rv(gv.to_sym => gval).prob
-      hn = PSpace.rv(rv).given(gv.to_sym => gval).entropy
-
-      # puts "  P(#{@gv} = #{gval}) * H(#{rv} | #{gv}=#{gval}) (#{pn * hn}) +"
-      t += pn * hn
-    end.tap { |val|
-      # puts "  = #{val}"
-    }
+      t += (pn * hn)
+    end
   end
 
-  # need to always be I(Y | X)
+  # I(Y | X)
+  #
+  # unsupported:
+  # I(Y | X, A = a)
+  # I(Y | X, A = a, B = b)
   def infogain
     raise "Need given var" if @uspec_gv.empty? and @spec_gv.empty?
     raise "Need unspecified given var" if @uspec_gv.empty?

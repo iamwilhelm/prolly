@@ -6,11 +6,11 @@ require "pspace"
 describe RandVar do
   let(:data) {
     [
-      { :color => :green, :size => :small, :texture => :smooth },
-      { :color => :blue,  :size => :small, :texture => :rough  },
-      { :color => :blue,  :size => :med,   :texture => :smooth },
-      { :color => :green, :size => :large, :texture => :rough  },
-      { :color => :green, :size => :small, :texture => :smooth },
+      { color: :green, size: :small, texture: :smooth, weight: :fat , opacity: :transparent },
+      { color: :blue,  size: :small, texture: :rough , weight: :thin, opacity: :transparent },
+      { color: :blue,  size: :med,   texture: :smooth, weight: :thin, opacity: :opaque },
+      { color: :green, size: :large, texture: :rough , weight: :thin, opacity: :opaque },
+      { color: :green, size: :small, texture: :smooth, weight: :thin, opacity: :opaque },
     ]
   }
 
@@ -236,32 +236,103 @@ describe RandVar do
       PSpace.import(data)
     end
 
-    context "when entropy of color" do
-      it "is H(X) = -∑ (pn log pn)" do
-        expect(PSpace.rv(:color).entropy).to be_within(0.001).of(
-          -0.6 * Math.log(0.6) / Math.log(10) - 0.4 * Math.log(0.4) / Math.log(10)
-        )
+    describe "#entropy_rv" do
+      context "when entropy of color" do
+        it "is H(X) = -∑ (pn log pn)" do
+          result = PSpace.rv(:color).entropy
+          expect(result).to be_within(0.001).of(
+            -0.6 * Math.log(0.6) / Math.log(10) - 
+             0.4 * Math.log(0.4) / Math.log(10)
+          )
+        end
+      end
+
+      context "when entropy of color, size" do
+        it "is H(color,size)" do
+          result = PSpace.rv(:color, :size).entropy
+          expect(result).to be_within(0.001).of(
+            -0.4 * Math.log(0.4) / Math.log(10) +
+            -0.2 * Math.log(0.2) / Math.log(10) * 3
+          )
+        end
+      end
+
+      context "when entropy of color | size = small" do
+        it "is H(color | size = small)" do
+          result = PSpace.rv(:color).given(size: :small).entropy
+          expect(result).to be_within(0.001).of(
+            -(1.0/3) * Math.log(1.0/3) / Math.log(10) +
+            -(2.0/3) * Math.log(2.0/3) / Math.log(10)
+          )
+        end
+
+        it "is H(color, size | texture = smooth)" do
+          result = PSpace.rv(:color, :size).given(texture: :smooth).entropy
+          expect(result).to be_within(0.001).of(
+            -(1.0/3) * Math.log(1.0/3) / Math.log(10) +
+            -(2.0/3) * Math.log(2.0/3) / Math.log(10)
+          )
+        end
+
+        it "is H(color | size=small, texture=smooth)" do
+          result = PSpace.rv(:color).given(size: :small, texture: :smooth).entropy
+          expect(result).to be_within(0.001).of(
+            -(1.0) * Math.log(1.0) / Math.log(10)
+          )
+        end
       end
     end
 
-    context "when entropy of color | size = small" do
-      it "is H(color | size = small)" do
-        expect(PSpace.rv(:color).given(size: :small).entropy).to be_within(0.001).of(
-          -(1.0/3) * Math.log(1.0/3) / Math.log(10) -
-          (2.0/3) * Math.log(2.0/3) / Math.log(10)
-        )
-      end
-    end
+    describe "#entropy_rv_gv" do
+      context "when entropy of color | size" do
+        it "is H(color | size)" do
+          result = PSpace.rv(:color).given(:size).entropy
+          expect(result).to be_within(0.001).of(
+            # :small * (:green | :small + :blue | :small)
+            (3.0 / 5) * (-(2.0/3) * Math.log(2.0/3) / Math.log(10) +
+                         -(1.0/3) * Math.log(1.0/3) / Math.log(10)) + 
+            # :med
+            (1.0 / 5) * (-(0.0) +
+                         -(1.0) * Math.log(1.0) / Math.log(10)) + 
+            # :large
+            (1.0 / 5) * (-(0.0) +
+                         -(1.0) * Math.log(1.0) / Math.log(10))
+          )
+        end
 
-    context "when entropy of color | size" do
-      it "is H(color | size)" do
-        result = PSpace.rv(:color).given(:size).entropy
-        #puts result
-        expect(result).to be_within(0.001).of(
-          (0.6) * (-(2.0/3) * Math.log(2.0/3) / Math.log(10) - (1.0/3) * Math.log(1.0/3) / Math.log(10)) + # :small
-          (0.2) * (-(0.0) - (1.0) * Math.log(1.0) / Math.log(10)) + # :med
-          (0.2) * (-(1.0) * Math.log(1.0) / Math.log(10) - (0.0))   # :large
-        )
+        it "is H(color, weight | size, weight = thin)"
+
+        it "is H(color | size, weight = thin)" do
+          result = PSpace.rv(:color).given(:size, weight: :thin)
+
+          expect(result.entropy).to be_within(0.001).of(
+            # :small * (:green | :small, :thin + :blue | :small, :thin)
+            (2.0/4) * (-(1.0/2) * Math.log(1.0/2) / Math.log(10) +
+                       -(1.0/2) * Math.log(1.0/2) / Math.log(10)) +
+            # :med
+            (1.0/4) * (-(0.0) +
+                       -(1.0) * Math.log(1.0) / Math.log(10)) + 
+            # :large
+            (1.0/4) * (-(0.0) +
+                       -(1.0) * Math.log(1.0) / Math.log(10))
+          )
+        end
+
+        it "is H(color | weight, size = small, texture = smooth)" do
+          result = PSpace.rv(:color).given(:size, opacity: :opaque, weight: :thin)
+          expect(result.entropy).to be_within(0.001).of(
+            # :small * (:green | :small
+            (1.0/3) * (-(0.0) +
+                       -(1.0) * Math.log(1.0) / Math.log(10)) +
+            # :med * (
+            (1.0/3) * (-(0.0) +
+                       -(1.0) * Math.log(1.0) / Math.log(10)) + 
+            # :large
+            (1.0/3) * (-(0.0) +
+                       -(1.0) * Math.log(1.0) / Math.log(10))
+          )
+        end
+
       end
     end
   end
