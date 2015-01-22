@@ -377,22 +377,30 @@ describe RandVar do
       end
     end
 
-    context "when color | size = green, weight" do
+    context "when color | size, weight = thin" do
+      # I(color | size, weight = thin) =
+      #   H(color | weight = thin) - H(color | size, weight = thin)"
+      it "is infogain(color | weight = thin)" do
+        result = PSpace.rv(:color).given(:size, weight: :thin).infogain
 
-      # I(color | size = green) =
-      #   H(color | size = green) - H(color | size = green, weight)"
-      it "is infogain(color | size = green, weight)" do
-        #result = PSpace.rv(:color).given(:weight, size: :green)
+        expect(result).to be_within(0.001).of(
+          PSpace.rv(:color).given(weight: :thin).entropy -
+          PSpace.rv(:color).given(:size, weight: :thin).entropy
+        )
       end
-
     end
 
-    context "when color | size = green, texture = rough, weight)" do
+    context "when color | texture, weight = thin, opacity = opaque)" do
+      it "is infogain(color | texture, weight = thin, opacity = opaque)" do
+        result = PSpace.rv(:color).given(:texture,
+                                         weight: :thin, opacity: :opaque).infogain
 
-      it "is infogain(color | size = green, texture = rough, weight)" do
-        #result = PSpace.rv(:color)
+        expect(result).to be_within(0.001).of(
+          PSpace.rv(:color).given(weight: :thin, opacity: :opaque).entropy -
+          PSpace.rv(:color).given(:texture,
+                                  weight: :thin, opacity: :opaque).entropy
+        )
       end
-
     end
 
   end
