@@ -186,6 +186,10 @@ class RandVar
       pn = PSpace.rv(gv).given(@spec_gv).prob
       hn = PSpace.rv(*@uspec_rv).given(gv).entropy
 
+      #puts "P(#{gv} | #{@spec_gv}) = #{pn}"
+      #puts "H(#{@uspec_rv} | #{gv}) = #{hn}"
+      #puts "  #{PSpace.rv(*@uspec_rv).given(gv).prob}"
+
       t += (pn * hn)
     end
   end

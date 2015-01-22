@@ -300,7 +300,33 @@ describe RandVar do
           )
         end
 
-        it "is H(color, weight | size, weight = thin)"
+        it "is H(color, texture | size, weight = thin)" do
+          result = PSpace.rv(:color, :texture).given(:size, weight: :thin)
+
+          expect(result.entropy).to be_within(0.001).of(
+            # :small * (:green, :smooth | :small, :thin +
+            #           :blue,  :smooth | :small, :thin +
+            #           :green, :rough  | :small, :thin +
+            #           :blue,  :rough  | :small, :thin )
+            (2.0/4) * (-(1.0/2) * Math.log(1.0/2) / Math.log(10) +
+                       -(0.0/2) * 0.0 / Math.log(10) +
+                       -(0.0/2) * 0.0 / Math.log(10) +
+                       -(1.0/2) * Math.log(1.0/2) / Math.log(10)
+                      ) +
+            # :med
+            (1.0/4) * (-(0.0/1) * 0.0 / Math.log(10) +
+                       -(1.0/1) * Math.log(1.0/1) / Math.log(10) +
+                       -(0.0/1) * 0.0 / Math.log(10) +
+                       -(0.0/1) * 0.0 / Math.log(10)
+                      ) +
+            # :large
+            (1.0/4) * (-(0.0/1) * 0.0 / Math.log(10) +
+                       -(0.0/1) * 0.0 / Math.log(10) +
+                       -(1.0/1) * Math.log(1.0/1) / Math.log(10) +
+                       -(0.0/1) * 0.0 / Math.log(10)
+                      )
+          )
+        end
 
         it "is H(color | size, weight = thin)" do
           result = PSpace.rv(:color).given(:size, weight: :thin)
@@ -318,18 +344,17 @@ describe RandVar do
           )
         end
 
-        it "is H(color | weight, size = small, texture = smooth)" do
-          result = PSpace.rv(:color).given(:size, opacity: :opaque, weight: :thin)
+        it "is H(color | texture, opacity=opaque, weight=thin)" do
+          result = PSpace.rv(:color).given(:texture,
+                                           opacity: :opaque,
+                                           weight: :thin)
           expect(result.entropy).to be_within(0.001).of(
-            # :small * (:green | :small
-            (1.0/3) * (-(0.0) +
-                       -(1.0) * Math.log(1.0) / Math.log(10)) +
-            # :med * (
-            (1.0/3) * (-(0.0) +
-                       -(1.0) * Math.log(1.0) / Math.log(10)) + 
-            # :large
-            (1.0/3) * (-(0.0) +
-                       -(1.0) * Math.log(1.0) / Math.log(10))
+            # :smooth * (:green | :smooth + :blue | :smooth)
+            (2.0/3) * (-(1.0/2) * Math.log(1.0/2) / Math.log(10) +
+                       -(1.0/2) * Math.log(1.0/2) / Math.log(10)) +
+            # :rough * (:green | :rough + :blue | :rough)
+            (1.0/3) * (-(1.0/1) * Math.log(1.0/1) / Math.log(10) +
+                       -(0.0/1) * 0.0 / Math.log(10))
           )
         end
 
