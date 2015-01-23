@@ -83,7 +83,11 @@ class RandVar
     numer = self.count()
     denom = @pspace.count(@spec_rv.keys)
 
-    return numer.to_f / denom
+    if denom == 0.0
+      return 0.0
+    else
+      return numer.to_f / denom
+    end
   end
 
   # P(color=green | size=small)
@@ -93,7 +97,11 @@ class RandVar
     numer = @pspace.count(@spec_rv.merge(@spec_gv))
     denom = @pspace.count(@spec_gv)
 
-    return numer.to_f / denom
+    if denom == 0.0
+      return 0.0
+    else
+      return numer.to_f / denom
+    end
   end
 
   # P(color=green | size)
