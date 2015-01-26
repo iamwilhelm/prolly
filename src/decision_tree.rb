@@ -1,7 +1,7 @@
 $:.unshift "src"
 
 require 'pspace'
-#require 'ruby-prof'
+require 'ruby-prof'
 
 module DecisionTree
   class << self
@@ -20,6 +20,12 @@ module DecisionTree
 
     def initialize
       @tree = nil
+    end
+
+    def load(data_set)
+      data_set.each { |datum|
+        add(datum)
+      }
     end
 
     def add(example)
@@ -42,13 +48,30 @@ module DecisionTree
       puts (" " * (space) * 4) + str
     end
 
-    def classify(data)
+    def classify(datum)
+      classify_helper(@tree, datum)
       # recursively traverse down the tree and figure out the decision.
       #classify_helper(....?)
     end
 
     # recursive.
-    def classify_helper
+    def classify_helper(node, datum)
+      if node.kind_of?(Hash)
+        max_result = node.max { |a, b| a[1] <=> b[1] }
+        return max_result[0]
+      else
+        # puts "node: #{node}"
+        unless datum.has_key?(node.name)
+          raise "Missing column #{node.name} in datum"
+        end
+
+        unless node.children.has_key?([datum[node.name]])
+          raise "Missing child #{datum[node.name]} for #{node.name}"
+        end
+
+        # puts datum[node.name]
+        return classify_helper(node.children[[datum[node.name]]], datum)
+      end
     end
 
     def learn(rv_target, &block)
@@ -65,7 +88,7 @@ module DecisionTree
 
       #result = RubyProf.stop
       #printer = RubyProf::MultiPrinter.new(result)
-      #printer.print(:path => "profile", :profile => "profile")
+      #printer.print(:path => "./profile", :profile => "profile", :min_percent => 2)
     end
 
     # rv_target - the variable we're trying to learn
@@ -182,66 +205,3 @@ module DecisionTree
 end
 
 
-#PSpace.import([
-#  { :cyl => 5, :acc => :low },
-#  { :cyl => 5, :acc => :low },
-#])
-#
-#puts PSpace.rv(:acc).given(:cyl).entropy
-
-
-
-dt = DecisionTree::Machine.new
-cols = [
-  :age, :workclass, :fnlwgt, :education, :education_num, :marital_status,
-  :occupation, :relationship, :race, :sex, :capital_gain, :capital_loss,
-  :hours_per_week, :native_country, :income
-]
-
-puts "loading..."
-DecisionTree.load(cols, "data/adult.data") do |example|
-  dt.add(example)
-end
-
-puts "learning..."
-dt.learn(:income) do |rv|
-  if rv == :age
-    false
-  elsif rv == :workclass
-    true
-  elsif rv == :fnlwgt
-    false
-  elsif rv == :education
-    false
-  elsif rv == :education_num
-    false
-  elsif rv == :marital_status
-    false
-  elsif rv == :occupation
-    false
-  elsif rv == :relationship
-    false
-  elsif rv == :race
-    false
-  elsif rv == :sex
-    true
-  elsif rv == :capital_gain
-    false
-  elsif rv == :capital_loss
-    false
-  elsif rv == :hours_per_week
-    false
-  elsif rv == :native_country
-    false
-  else
-    true
-  end
-end
-
-puts dt.tree.inspect
-
-
-#datum = { size: :large }
-#classification = dt.classify(:color, datum)
-#
-#puts classification
