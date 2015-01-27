@@ -66,7 +66,7 @@ module DecisionTree
         end
 
         unless node.children.has_key?([datum[node.name]])
-          raise "Missing child #{datum[node.name]} for #{node.name}"
+          return nil
         end
 
         # puts datum[node.name]

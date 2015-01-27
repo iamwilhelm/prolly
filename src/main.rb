@@ -113,7 +113,8 @@ cv.setup do |cv|
   DecisionTree.load(cols, "data/adult.csv") do |example|
     data = discretize(example)
     data.delete(:fnlwgt)
-    data.delete(:education_number)
+    data.delete(:education_num)
+    data.delete(:native_country)
     cv.add(data)
   end
 end

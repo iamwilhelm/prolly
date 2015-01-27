@@ -47,14 +47,14 @@ class CrossValidation
       error_rate = errors.count { |e| e == true }.to_f / errors.length
       puts "Error rate is #{error_rate.round(4)}"
 
-      [learner, error_rate]
+      [learner, columns, error_rate]
     end
 
     puts "!!!!!!!!!!!! learner_and_errors !!!!!!!!!!!!!!"
     puts Hash[*learner_and_errors.flatten].values.inspect
     puts
 
-    learner_and_errors.each do |learner, _|
+    learner_and_errors.each do |learner, columns, _|
       # run model on test set for generalized error
       errors = @test_set.map do |datum|
         expected = [datum[target_rv]]
@@ -64,7 +64,7 @@ class CrossValidation
 
       error_rate = errors.count { |e| e == true }.to_f / errors.length
 
-      puts "Learner set error rate: #{error_rate.round(4)}"
+      puts "#{columns.inspect} error rate: #{error_rate.round(4)}"
     end
     puts
 
@@ -95,7 +95,11 @@ class CrossValidation
   end
 
   def models
-    [2,2,2,2].map { |n| @cols.sample(n) }
+    [2,2,2,2,3,3,3,3,4,4,4,4].map { |n|
+      @cols.reject { |c|
+        [:fnlwgt, :education_num, :native_country].include?(c)
+      }.sample(n)
+    }
   end
 
 end
