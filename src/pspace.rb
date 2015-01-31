@@ -1,10 +1,14 @@
+require "forwardable"
 require "rand_var"
 
+require "pspace/storage/rubylist"
 class PSpace
 
   class << self
+    attr_reader :ps
+
     def import(data)
-      @ps = PSpace.new(data)
+      @ps ||= PSpace.new(data)
     end
 
     def reset
@@ -48,40 +52,13 @@ class PSpace
     end
   end
 
+  extend Forwardable
+
+  def_delegators :@storage, :reset, :add, :count, :rand_vars, :uniq_vals
+
   def initialize(data)
-    @data = data
-    @uniq_vals = {}
-    @stash ||= {}
-  end
-
-  def stash
-    @stash
-  end
-
-  def add(datum)
-    @data << datum
-  end
-
-  def count(rvs)
-    if rvs.kind_of?(Array)
-      @stash["#{rvs}"] ||= @data.count { |e|
-        rvs.all? { |rv| e.has_key?(rv) }
-      }
-    elsif rvs.kind_of?(Hash)
-      @stash["#{rvs}"] ||= @data.count { |e|
-        rvs.map { |rkey, rval| e[rkey] == rval }.all?
-      }
-    end
-  end
-
-  def uniq_vals(name)
-    @uniq_vals[name] ||= @data.map { |li| li.has_key?(name) ? li[name] : nil }.uniq
-  end
-
-  def rand_vars
-    @data.first.keys
+    @storage = Storage::Rubylist.new(data)
   end
 
 end
-
 
