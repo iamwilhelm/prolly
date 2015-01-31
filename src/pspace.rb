@@ -10,7 +10,9 @@ class PSpace
     attr_reader :ps
 
     def import(data)
-      @ps ||= PSpace.new(data)
+      # specs need this to create new.
+      # Why did I use ||=?
+      @ps = PSpace.new(data)
     end
 
     def reset
