@@ -7,6 +7,11 @@ class PSpace
       @ps = PSpace.new(data)
     end
 
+    def reset
+      @ps ||= PSpace.new([])
+      @ps.reset
+    end
+
     def add(datum)
       @ps ||= PSpace.new([])
       @ps.add(datum)

@@ -26,6 +26,7 @@ class CrossValidation
 
     learner_and_errors = models.map do |columns|
       puts "Model size: #{columns.length}"
+      ::PSpace.reset
       learner = ::DecisionTree::Machine.new
 
       puts "loading..."
@@ -46,6 +47,7 @@ class CrossValidation
       
       error_rate = errors.count { |e| e == true }.to_f / errors.length
       puts "Error rate is #{error_rate.round(4)}"
+      puts
 
       [learner, columns, error_rate]
     end
