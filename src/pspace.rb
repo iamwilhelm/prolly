@@ -2,6 +2,8 @@ require "forwardable"
 require "rand_var"
 
 require "pspace/storage/rubylist"
+require "pspace/storage/redis"
+
 class PSpace
 
   class << self
@@ -58,6 +60,7 @@ class PSpace
 
   def initialize(data)
     @storage = Storage::Rubylist.new(data)
+    #@storage = Storage::Redis.new(data)
   end
 
 end
