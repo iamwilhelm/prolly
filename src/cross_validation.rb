@@ -97,7 +97,7 @@ class CrossValidation
   end
 
   def models
-    [2,2,2,2,3,3,3,3,4,4,4,4].map { |n|
+    [2,2].map { |n|
       @cols.reject { |c|
         [:fnlwgt, :education_num, :native_country].include?(c)
       }.sample(n)

@@ -17,6 +17,7 @@ class PSpace
       end
 
       def import(data)
+        data.each { |datum| add(datum) }
       end
 
       def add(datum)

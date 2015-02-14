@@ -6,29 +6,27 @@ class PSpace
     class Redis
 
       def initialize(data)
-        @redis = Redis.new
+        @redis = ::Redis.new(host: "localhost", port: "6379")
+        reset
+        import(data) unless data.nil?
       end
 
       def reset
-        rand_vars.each do |rv|
-          uniq_vals(rv) do |val|
-            @redis.del "pspace:count:#{rv}=#{val}"
-          end
-          @redis.del "pspace:count:#{rv}"
-          @redis.del "pspace:uniq_vals:#{rv}"
-        end
-        @redis.del "pspace:rand_vars"
+        @redis.keys("pspace:*").each { |k| @redis.del k }
       end
 
       def import(data)
+        data.each { |datum| add(datum) }
       end
 
       def add(datum)
         datum.each do |rv, val|
           @redis.sadd "pspace:rand_vars", rv
           @redis.sadd "pspace:uniq_vals:#{rv}", val
-          @redis.pfadd "pspace:count:#{attr}", datum.object_id
-          @redis.pfadd "pspace:count:#{attr}=#{val}", datum.object_id
+
+          @redis.PFADD "pspace:count:#{rv}", datum.object_id.to_i
+          @redis.PFADD "pspace:count:#{rv}=#{val}", datum.object_id.to_i
+
         end
       end
 

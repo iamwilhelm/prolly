@@ -16,9 +16,10 @@ describe RandVar do
 
   describe "#count" do
     before do
+      PSpace.reset
       PSpace.import(data)
     end
-    
+
     context "when counting color" do
       # TODO or should it be the count distribution?
       it "is size of entire set" do
@@ -77,6 +78,7 @@ describe RandVar do
 
   describe "#prob" do
     before do
+      PSpace.reset
       PSpace.import(data)
     end
 
@@ -233,6 +235,7 @@ describe RandVar do
 
   describe "#entropy" do
     before do
+      PSpace.reset
       PSpace.import(data)
     end
 
@@ -364,6 +367,7 @@ describe RandVar do
 
   describe "#infogain" do
     before do
+      PSpace.reset
       PSpace.import(data)
     end
 
