@@ -43,7 +43,7 @@ class PSpace
       end
 
       def rand_vars
-        @rand_vars
+        @session[:rand_vars].find.map { |rv| rv[:name] }
       end
 
       def uniq_vals(name)
@@ -56,11 +56,13 @@ class PSpace
       private
 
       def new_rvs(datum)
-        return datum.keys - @rand_vars 
+        return datum.keys - rand_vars 
       end
 
       def record_new_rand_vars(datum)
-        @rand_vars = @rand_vars.concat(datum.keys).uniq
+        new_rvs(datum).each do |rv|
+          @session[:rand_vars].insert({ name: rv })
+        end
       end
 
     end
