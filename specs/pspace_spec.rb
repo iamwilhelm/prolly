@@ -14,11 +14,12 @@ describe PSpace do
     ]
   }
 
-  describe "#uniq_vals" do
-    before do
-      PSpace.import(data)
-    end
+  before do
+    PSpace.reset
+    PSpace.import(data)
+  end
 
+  describe "#uniq_vals" do
     context "when asking for uniq vals of colors" do
       it "is green and blue" do
         result = PSpace.uniq_vals([:color])

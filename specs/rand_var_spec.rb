@@ -14,12 +14,12 @@ describe RandVar do
     ]
   }
 
-  describe "#count" do
-    before do
-      PSpace.reset
-      PSpace.import(data)
-    end
+  before do
+    PSpace.reset
+    PSpace.import(data)
+  end
 
+  describe "#count" do
     context "when counting color" do
       # TODO or should it be the count distribution?
       it "is size of entire set" do
@@ -77,10 +77,6 @@ describe RandVar do
   end
 
   describe "#prob" do
-    before do
-      PSpace.reset
-      PSpace.import(data)
-    end
 
     describe "#prob_rv_eq" do
       context "when prob color = green" do
@@ -234,10 +230,6 @@ describe RandVar do
   end
 
   describe "#entropy" do
-    before do
-      PSpace.reset
-      PSpace.import(data)
-    end
 
     describe "#entropy_rv" do
       context "when entropy of color" do
@@ -366,10 +358,6 @@ describe RandVar do
   end
 
   describe "#infogain" do
-    before do
-      PSpace.reset
-      PSpace.import(data)
-    end
 
     context "when color | size" do
       # I(color | size) = H(color) - H(color | size)

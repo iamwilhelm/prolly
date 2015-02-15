@@ -1,23 +1,18 @@
+require 'pspace/storage/base'
+
 class PSpace
   module Storage
 
-    class Rubylist
+    class Rubylist < Base
 
-      def initialize(data)
-        reset
-        @data = data
+      def initialize
+        super
       end
 
       def reset
+        super
         @data = []
         @uniq_vals = {}
-        @stash ||= {}
-        @stash_stats ||= { hits: 0, misses: 0 }
-        @stash_time ||= {}
-      end
-
-      def import(data)
-        data.each { |datum| add(datum) }
       end
 
       def add(datum)
@@ -35,15 +30,15 @@ class PSpace
         elapsed = Time.now - start_time
         return value
 
-        if @stash.has_key?(rvs.to_s) and reload == false
-          @stash_stats[:hits] += 1
-          @stash_time[rvs.to_s][:usage] += 1
-          return @stash[rvs.to_s]
-        else
-          @stash_stats[:misses] += 1
-          @stash_time[rvs.to_s] = { elapsed: elapsed, usage: 0 }
-          return @stash[rvs.to_s] = value
-        end
+        #if @stash.has_key?(rvs.to_s) and reload == false
+        #  @stash_stats[:hits] += 1
+        #  @stash_time[rvs.to_s][:usage] += 1
+        #  return @stash[rvs.to_s]
+        #else
+        #  @stash_stats[:misses] += 1
+        #  @stash_time[rvs.to_s] = { elapsed: elapsed, usage: 0 }
+        #  return @stash[rvs.to_s] = value
+        #end
       end
 
       def rand_vars
