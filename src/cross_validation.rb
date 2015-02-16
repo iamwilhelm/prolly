@@ -26,7 +26,7 @@ class CrossValidation
 
     learner_and_errors = models.map do |columns|
       puts "Model size: #{columns.length}"
-      ::PSpace.reset
+      ::Ps.reset
       learner = ::DecisionTree::Machine.new
 
       puts "loading..."
@@ -97,7 +97,7 @@ class CrossValidation
   end
 
   def models
-    [2,2].map { |n|
+    [4,4].map { |n|
       @cols.reject { |c|
         [:fnlwgt, :education_num, :native_country].include?(c)
       }.sample(n)

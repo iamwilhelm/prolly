@@ -29,7 +29,7 @@ module DecisionTree
     end
 
     def add(example)
-      ::PSpace.add(example)
+      ::Ps.add(example)
     end
 
     def split_rv(rv)
@@ -78,7 +78,7 @@ module DecisionTree
       #RubyProf.start
 
       tkey, tval = split_rv(rv_target)
-      rvs = ::PSpace.rv.reject { |rv| rv == tkey }
+      rvs = ::Ps.rv.reject { |rv| rv == tkey }
       rvs.reject! do |key|
         !block.call(key)
       end
@@ -101,7 +101,7 @@ module DecisionTree
 
       # calculate all gains for remaining rand vars
       gains = rand_vars.map do |key|
-        ig = ::PSpace.rv(tkey).given(key, rv_parents).infogain
+        ig = ::Ps.rv(tkey).given(key, rv_parents).infogain
         putss rand_vars, "#{tkey} | #{key}, #{rv_parents} = #{ig}"
         [ key, ig ]
       end
@@ -128,12 +128,12 @@ module DecisionTree
       node = Node.new(rkey)
 
       # create a child node for every value of selected rkey
-      ::PSpace.uniq_vals([rkey]).each do |rval|
+      ::Ps.uniq_vals([rkey]).each do |rval|
         rval_str = rval.first
         new_rv_parents = rv_parents.clone.merge(rkey => rval_str)
 
         putss rand_vars, "P(#{tkey} | #{new_rv_parents}) ="
-        prob_distr = ::PSpace.rv(tkey).given(new_rv_parents).prob
+        prob_distr = ::Ps.rv(tkey).given(new_rv_parents).prob
         putss rand_vars, "-- #{prob_distr}"
 
         ## base case 0
@@ -152,7 +152,7 @@ module DecisionTree
         end
 
         # base case 1
-        ent = ::PSpace.rv(tkey).given(new_rv_parents).entropy
+        ent = ::Ps.rv(tkey).given(new_rv_parents).entropy
         putss rand_vars, "H(#{tkey} | #{new_rv_parents}) ="
         putss rand_vars, "-- #{ent}"
         if ent == 0.0

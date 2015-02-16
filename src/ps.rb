@@ -1,15 +1,15 @@
 require "forwardable"
 require "rand_var"
 
-require "pspace/storage/rubylist"
-require "pspace/storage/mongodb"
-require "pspace/storage/redis"
+require "ps/storage/rubylist"
+require "ps/storage/mongodb"
+require "ps/storage/redis"
 
-class PSpace
+class Ps
 
   class << self
     def ps
-      @ps ||= PSpace.new
+      @ps ||= Ps.new
     end
 
     def import(data)

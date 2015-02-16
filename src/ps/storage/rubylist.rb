@@ -1,6 +1,6 @@
-require 'pspace/storage/base'
+require 'ps/storage/base'
 
-class PSpace
+class Ps
   module Storage
 
     class Rubylist < Base

@@ -117,9 +117,9 @@ class RandVar
   # P(color) = [P(color=green), P(color=blue)]
   # P(color, size) = [every combo of color and size]
   def prob_rv
-    distr = ::PSpace.uniq_vals(@uspec_rv).flat_map do |rv_vals|
+    distr = ::Ps.uniq_vals(@uspec_rv).flat_map do |rv_vals|
       spec_rv = Hash[*@uspec_rv.zip(rv_vals).flatten]
-      [rv_vals, PSpace.rv(spec_rv).prob]
+      [rv_vals, Ps.rv(spec_rv).prob]
     end
 
     Hash[*distr]
@@ -130,9 +130,9 @@ class RandVar
   # P(color | size=small, texture=smooth) =
   #   [P(every color | size=small, texture=smooth)]
   def prob_rv_gv_eq
-    distr = ::PSpace.uniq_vals(@uspec_rv).flat_map do |rv_vals|
+    distr = ::Ps.uniq_vals(@uspec_rv).flat_map do |rv_vals|
       spec_rv = Hash[*@uspec_rv.zip(rv_vals).flatten]
-      [rv_vals, PSpace.rv(spec_rv).given(@spec_gv).prob]
+      [rv_vals, Ps.rv(spec_rv).given(@spec_gv).prob]
     end
 
     Hash[*distr]
@@ -148,7 +148,7 @@ class RandVar
     distr = @pspace.uniq_vals(rv).flat_map do |rv_val|
       #puts "rv | gv : #{rv.to_s} | #{@gv.to_s}"
 
-      [rv_val, PSpace.rv(rv.to_sym => rv_val).given(gv.to_sym).prob]
+      [rv_val, Ps.rv(rv.to_sym => rv_val).given(gv.to_sym).prob]
     end
     Hash[*distr]
   end
@@ -187,16 +187,16 @@ class RandVar
   # H(color, weight | size, texture = smooth)
   # H(color | size, texture = smooth)
   def entropy_rv_gv
-    ::PSpace.uniq_vals(@uspec_gv).inject(0) do |t, gv_vals|
+    ::Ps.uniq_vals(@uspec_gv).inject(0) do |t, gv_vals|
       uspec_gv_speced = Hash[*@uspec_gv.zip(gv_vals).flatten]
       gv = @spec_gv.merge(uspec_gv_speced)
 
-      pn = PSpace.rv(gv).given(@spec_gv).prob
-      hn = PSpace.rv(*@uspec_rv).given(gv).entropy
+      pn = Ps.rv(gv).given(@spec_gv).prob
+      hn = Ps.rv(*@uspec_rv).given(gv).entropy
 
       #puts "P(#{gv} | #{@spec_gv}) = #{pn}"
       #puts "H(#{@uspec_rv} | #{gv}) = #{hn}"
-      #puts "  #{PSpace.rv(*@uspec_rv).given(gv).prob}"
+      #puts "  #{Ps.rv(*@uspec_rv).given(gv).prob}"
 
       t += (pn * hn)
     end
@@ -211,8 +211,8 @@ class RandVar
     raise "Need unspecified rand var" if @uspec_rv.empty?
 
     # puts "I(#{@rv} | #{@gv})"
-    PSpace.rv(*@uspec_rv).given(@spec_gv).entropy -
-      PSpace.rv(*@uspec_rv).given(*@uspec_gv, @spec_gv).entropy
+    Ps.rv(*@uspec_rv).given(@spec_gv).entropy -
+      Ps.rv(*@uspec_rv).given(*@uspec_gv, @spec_gv).entropy
   end
 
 end

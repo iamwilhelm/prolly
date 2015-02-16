@@ -1,5 +1,5 @@
 
-class PSpace
+class Ps
   module Storage
 
     class Base

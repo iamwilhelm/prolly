@@ -1,9 +1,9 @@
 $:.unshift "src"
 
 require "rspec"
-require "pspace"
+require "ps"
 
-describe PSpace do
+describe Ps do
   let(:data) {
     [
       { :color => :green, :size => :small, :texture => :smooth },
@@ -15,14 +15,14 @@ describe PSpace do
   }
 
   before do
-    PSpace.reset
-    PSpace.import(data)
+    Ps.reset
+    Ps.import(data)
   end
 
   describe "#uniq_vals" do
     context "when asking for uniq vals of colors" do
       it "is green and blue" do
-        result = PSpace.uniq_vals([:color])
+        result = Ps.uniq_vals([:color])
         expect(result).to include([:blue])
         expect(result).to include([:green])
       end
@@ -30,7 +30,7 @@ describe PSpace do
 
     context "when asking for uniq vals of colors and sizes" do
       it "is combinations of green blue, small, med, and large" do
-        result = PSpace.uniq_vals([:color, :size])
+        result = Ps.uniq_vals([:color, :size])
         expect(result).to include([:green, :small])
         expect(result).to include([:green, :med])
         expect(result).to include([:green, :large])
@@ -42,7 +42,7 @@ describe PSpace do
 
     context "when asking for uniq vals of colors, sizes, and textures" do
       it "is combinations of blue, green, small, med, large, smooth, and rough" do
-        result = PSpace.uniq_vals([:color, :size, :texture])
+        result = Ps.uniq_vals([:color, :size, :texture])
         expect(result).to include([:green, :small, :smooth])
         expect(result).to include([:green, :med  , :smooth])
         expect(result).to include([:green, :large, :smooth])

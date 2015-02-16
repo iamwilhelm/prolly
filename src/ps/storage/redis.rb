@@ -1,6 +1,6 @@
 require "redis"
 
-class PSpace
+class Ps
   module Storage
 
     class Redis

@@ -1,6 +1,7 @@
+require 'date'
 require 'moped'
 
-class PSpace
+class Ps
   module Storage
 
     class Mongodb < Base
