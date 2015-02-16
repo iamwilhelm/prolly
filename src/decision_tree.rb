@@ -1,6 +1,6 @@
 $:.unshift "src"
 
-require 'pspace'
+require 'ps'
 require 'ruby-prof'
 
 module DecisionTree
