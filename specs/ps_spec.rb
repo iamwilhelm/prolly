@@ -1,7 +1,9 @@
-$:.unshift "src"
+$:.unshift "lib"
 
 require "rspec"
-require "ps"
+require "prolly"
+
+include Prolly
 
 describe Ps do
   let(:data) {

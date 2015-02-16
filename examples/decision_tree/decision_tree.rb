@@ -1,7 +1,8 @@
-$:.unshift "src"
 
-require 'ps'
-require 'ruby-prof'
+require 'prolly'
+#require 'ruby-prof'
+
+include Prolly
 
 module DecisionTree
   class << self

@@ -4,7 +4,7 @@
 #puts classification
 
 
-require 'decision_tree'
+require_relative 'decision_tree'
 
 class CrossValidation
 

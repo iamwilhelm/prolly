@@ -1,7 +1,8 @@
-$:.unshift "src"
-
 require "rspec"
-require "ps"
+
+require "prolly"
+
+include Prolly
 
 describe RandVar do
   let(:data) {

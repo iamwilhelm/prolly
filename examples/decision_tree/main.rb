@@ -1,7 +1,6 @@
-$:.unshift "src"
 
-require 'cross_validation'
-require 'decision_tree'
+require_relative 'cross_validation'
+require_relative 'decision_tree'
 
 cols = [
   :age, :workclass, :fnlwgt, :education, :education_num, :marital_status,
@@ -121,75 +120,4 @@ end
 
 cv.run(:income)
 
-#dt = DecisionTree::Machine.new
-#cols = [
-#  :age, :workclass, :fnlwgt, :education, :education_num, :marital_status,
-#  :occupation, :relationship, :race, :sex, :capital_gain, :capital_loss,
-#  :hours_per_week, :native_country, :income
-#]
-#
-#puts "loading..."
-#DecisionTree.load(cols, "data/adult.data") do |example|
-#  dt.add(example)
-#end
-#
-#puts "learning..."
-#dt.learn(:income) do |rv|
-#  if rv == :age
-#    false
-#  elsif rv == :workclass
-#    true
-#  elsif rv == :fnlwgt
-#    false
-#  elsif rv == :education
-#    true
-#  elsif rv == :education_num
-#    false
-#  elsif rv == :marital_status
-#    true
-#  elsif rv == :occupation
-#    false
-#  elsif rv == :relationship
-#    false
-#  elsif rv == :race
-#    false
-#  elsif rv == :sex
-#    true
-#  elsif rv == :capital_gain
-#    false
-#  elsif rv == :capital_loss
-#    false
-#  elsif rv == :hours_per_week
-#    false
-#  elsif rv == :native_country
-#    false
-#  else
-#    true
-#  end
-#end
-#
-#puts dt.tree.inspect
-#
-#datum = {
-#  :age => 39,
-#  :workclass => "State-gov",
-#  :fnlwgt => "77516",
-#  :education => "Bachelors",
-#  :education_num => 13,
-#  :marital_status => "Never-married",
-#  :occupation => "Adm-clerical",
-#  :relationship => "Not-in-family",
-#  :race => "White",
-#  :sex => "Male",
-#  :capital_gain => "2174",
-#  :captial_loss => "0",
-#  :hours_per_week => "40",
-#  :native_country => "United-States",
-#  :income => "<=50K"
-#}
-#classification = dt.classify(datum)
-#
-#puts datum.inspect
-#puts "actual: #{classification}"
-#puts "expected: #{[datum[:income]]}"
 
