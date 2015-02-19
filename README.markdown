@@ -1,6 +1,8 @@
 # Prolly
 
-**Prolly makes writing machine learning algorithms easier.** It's a Domain Specific Language (DSL) for expressing probabilities in code. By being able to express probabilities is useful.
+**Prolly is a Domain Specific Language (DSL) for expressing probabilities in code.** 
+Being able to express probabilities is useful for writing machine learning algorithms
+at a higher level of abstraction.
 
 ## Quick intro
 
@@ -14,6 +16,12 @@ Ps.rv(color: blue).given(size: red).prob * Ps.rv(size: red).prob / Ps.rv(color: 
 ```
 
 And the above will calculate P(Size=red | color= blue)
+
+## Examples
+
+There are examples of using Prolly to write learning algorithms.
+
+- [Decision Tree](https://github.com/iamwilhelm/prolly/tree/master/examples/decision_tree)
 
 ## Installing
 
