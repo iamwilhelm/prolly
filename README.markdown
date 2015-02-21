@@ -298,7 +298,7 @@ Probability density for a conditional random variable.
 Ps.rv(:color).given(size: :small).pdf
 ```
 
-### Entropy of color given size is small
+### Entropy
 
 Entropy of the RV color.
 ```ruby
@@ -312,7 +312,7 @@ Entropy of color given the marble is small
 Ps.rv(:color).given(size: :small).entropy
 ```
 
-### Information Gain of color given size
+### Information Gain
 
 Information gain of color and size.
 ```ruby
