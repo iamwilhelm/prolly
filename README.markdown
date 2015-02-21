@@ -88,8 +88,8 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color)</th>
 		<th/>
 		<th/>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th/>
 		<th></th>
 	</tr>
@@ -97,17 +97,17 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color)</th>
 		<th>.given(:size)</th>
 		<th/>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
 		<th>.given(size: :small)</th>
 		<th></th>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -115,8 +115,8 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color)</th>
 		<th>.given(size: :small, weight: :fat)</th>
 		<th></th>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -125,16 +125,16 @@ Each of the operations will only work with certain combinations of random variab
 		<th>.given(:size, weight: :fat)</th>
 		<th></th>
 		<th></th>
-		<th style="background-color: yellowgreen">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
 		<th></th>
 		<th></th>
-		<th style="background-color: indianred">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -142,8 +142,8 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(:size)</th>
 		<th></th>
-		<th style="background-color: indianred">&#10003;</th>
-		<th style="background-color: indianred">&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&Delta;!</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -151,8 +151,8 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(size: :small)</th>
 		<th></th>
-		<th style="background-color: indianred">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -160,8 +160,8 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(size: :small, weight: :fat)</th>
 		<th></th>
-		<th style="background-color: indianred">&#10003;</th>
-		<th style="background-color: indianred">&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&Delta;!</th>
 		<th></th>
 		<th></th>
 	</tr>
@@ -169,15 +169,15 @@ Each of the operations will only work with certain combinations of random variab
 		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(:size, weight: :fat)</th>
 		<th></th>
-		<th style="background-color: indianred">&#10003;</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
 		<th></th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -186,7 +186,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
 		<th>.given(:size)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -195,7 +195,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
 		<th>.given(size: :small)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -204,7 +204,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
 		<th>.given(size: :small, weight: :fat)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -213,7 +213,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
 		<th></th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -222,7 +222,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
 		<th>.given(:size)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -231,7 +231,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
 		<th>.given(size: :small)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
@@ -240,7 +240,7 @@ Each of the operations will only work with certain combinations of random variab
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
 		<th>.given(size: :small, weight: :fat)</th>
-		<th style="background-color: yellowgreen">&#10003;</th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 		<th></th>
