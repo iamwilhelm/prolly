@@ -87,78 +87,6 @@ Legend:
 
 <table>
 	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
 		<th>RandVar</th>
 		<th>Given</th>
 		<th>.prob</th>
@@ -166,6 +94,78 @@ Legend:
 		<th>.entropy</th>
 		<th>.infogain</th>
 		<th>.count</th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(:size)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(size: :small)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(:size)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(size: :small)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
