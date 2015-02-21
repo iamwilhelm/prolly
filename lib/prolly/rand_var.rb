@@ -1,4 +1,5 @@
 require 'prolly/rand_var/prob'
+require 'prolly/rand_var/pdf'
 require 'prolly/rand_var/entropy'
 require 'prolly/rand_var/infogain'
 
@@ -7,6 +8,7 @@ module Prolly
   class RandVar
 
     include Prob
+    include Pdf
     include Entropy
     include Infogain
 

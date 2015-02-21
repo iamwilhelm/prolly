@@ -28,7 +28,7 @@ module Prolly
       # H(color, size | texture=smooth)
       # H(color | size=small, texture=smooth)
       def entropy_rv
-        distr = prob
+        distr = pdf
         distr.inject(0) do |t, kv|
           name, pn = kv
           t += -pn * (pn == 0 ? 0.0 : Math.log(pn)) / Math.log(10)
