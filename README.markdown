@@ -54,15 +54,11 @@ You start with probability space.
 ```
 Ps
 ```
-then pick the random variable you want to examine
-```
-Ps.rv(:color)
-```
-We can also use specified random variable to examine
+then pick an specified random variable to examine
 ```
 Ps.rv(color: :blue)
 ```
-And if necessary, pick the conditional random variable
+And if necessary, pick a conditional random variable
 ```
 Ps.rv(color: :blue).given(size: :small)
 ```
@@ -72,9 +68,96 @@ Ps.rv(color: :blue).given(size: :small).prob
 ```
 And that will give you the probability of the random variable Color is :blue given that the Size was :small. 
 
-Each of the operations will only work with certain combinations of random variables, specific or not. The possibilities are listed below, and Prolly will throw an exception if it's violated. Checkmark means it's a valid operation given the random variable construction. The colors indicate whether it's been implemented or not.
+### Random Variables and Operations
+
+A random variable can be specified `Ps.rv(:color)` or unspecified `Ps.rv(color: :blue)`. So too can conditional random variables be specified or unspecified. 
+
+Prolly currently supports four operations.
+
+- .prob &middot; Calculates probability, a fractional number representing the belief you have that an event will occur; based on the amount of evidence you've seen for that event.
+- .pdf &middot; Calculates probability density function, a hash of all possible probabilities for the random variable. 
+- .entropy &middot; Calculates entropy, a fractional number representing the spikiness or smoothness of a density function, which implies how much information is in the random variable.
+- .infogain &middot; Calculates information gain, a fractional number representing the amount of information (that is, reduction in uncertainty) that knowing either variable provides about the other.
+
+Each of the operations will only work with certain combinations of random variables. The possibilities are listed below, and Prolly will throw an exception if it's violated. 
+
+Legend:
+ - &#10003; available for this operator
+ - &Delta;! available, but not yet implemented for this operator.
 
 <table>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(:size)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(size: :small)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(:size)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(size: :small)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>Ps.rv(color: :blue, texture: :rough)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
 	<tr>
 		<th>RandVar</th>
 		<th>Given</th>
@@ -174,146 +257,77 @@ Each of the operations will only work with certain combinations of random variab
 		<th></th>
 		<th></th>
 	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th></th>
-	</tr>
 </table>
+## Examples
 
 ### Probabilities
 
 What is the probability there is a blue marble?
-```
+```ruby
 # P(C = blue)
 Ps.rv(color: :blue).prob
 ```
 
 What is the joint probability there is a blue marble that also has a rough texture?
-```
+```ruby
 # P(C = blue, T = rough)
 Ps.rv(color: :blue, texture: :rough).prob
 ```
 
 What is the probability of a blue marble given that the marble is small?
-```
+```ruby
 # P(C = blue | S = small)
 Ps.rv(color: :blue).given(size: :small).prob
 ```
 
 What is the probability of a blue marble and rough texture given that the marble is small?
-```
+```ruby
 # P(C = blue, T = rough | S = small)
 Ps.rv(color: :blue, texture: :rough).given(size: :small).prob
 ```
 
-What is the probability of 
-
-### Probability densities
+### Probability density functions
 
 Probability density for a random variable.
-```
-Ps.rv(:color).prob
+```ruby
+Ps.rv(:color).pdf
 ```
 
 Probability density for a conditional random variable.
-```
-Ps.rv(:color).given(size: :small).prob
+```ruby
+Ps.rv(:color).given(size: :small).pdf
 ```
 
 ### Entropy of color given size is small
 
-Entropy of a random variable is pretty easy too.
-
-```
+Entropy of the RV color.
+```ruby
 # H(C)
 Ps.rv(:color).entropy
 ```
 
-```
+Entropy of color given the marble is small
+```ruby
 # H(C | S = small)
 Ps.rv(:color).given(size: :small).entropy
 ```
 
 ### Information Gain of color given size
 
-```
+Information gain of color and size.
+```ruby
 # IG(C | S)
 Ps.rv(:color).given(:size).infogain
 ```
 ### Counts
 
 At the base of all the probabilities are counts of stuff.
-
-```
+```ruby
 Ps.rv(color: :blue).count
+```
+
+```ruby
+Ps.rv(:color).given(:size).count
 ```
 
 ## Contributing
@@ -323,3 +337,4 @@ Ps.rv(color: :blue).count
 ## License
 
 MIT license
+
