@@ -4,6 +4,43 @@
 Being able to express probabilities is useful for writing machine learning algorithms
 at a higher level of abstraction.
 
+## What can I use this for?
+
+A couple years back, I was reading [a blog post](http://weblog.raganwald.com/2008/02/naive-approach-to-hiring-people.html) by Raganwald, where I read this quote:
+
+<blockquote>
+A very senior Microsoft developer who moved to Google told me that Google works and thinks at a higher level of abstraction than Microsoft. “Google uses Bayesian filtering the way Microsoft uses the if statement,” he said.
+
+—Joel Spolsky, Microsoft Jet
+</blockquote>
+
+That got me thinking very literally. What would it look like if we have probability statements to use natively like we have "if" statements? How would that change how we code? That would mean we could make decisions not just on the information we have on hand, but the prior information we saw before.
+
+So instead of writing something like
+
+```ruby
+if email == "iamwil@gmail.com"
+  # accept order
+else
+  # reject order
+end
+```
+
+We can writing something akin to
+
+```ruby
+if P(email = "iamwil") > 0.8
+  # accept order
+else
+  # reject order
+end
+```
+
+There are examples of using Prolly to write learning algorithms.
+
+- [Decision Tree](https://github.com/iamwilhelm/prolly/tree/master/examples/decision_tree)
+
+
 ## Quick intro
 
 Prolly makes it easy to express probabilities from data. It can also calculate entropies of random variables 
@@ -347,10 +384,3 @@ Write some specs, make sure the entire thing passes. Then submit a pull request.
 ## License
 
 MIT license
-
-## Changelog
-
-0.0.1
- - Add samples
- - Calculate probability, density functions, entropy, infogain.
-
