@@ -134,7 +134,7 @@ module DecisionTree
         new_rv_parents = rv_parents.clone.merge(rkey => rval_str)
 
         putss rand_vars, "P(#{tkey} | #{new_rv_parents}) ="
-        prob_distr = ::Ps.rv(tkey).given(new_rv_parents).prob
+        prob_distr = ::Ps.rv(tkey).given(new_rv_parents).pdf
         putss rand_vars, "-- #{prob_distr}"
 
         ## base case 0
