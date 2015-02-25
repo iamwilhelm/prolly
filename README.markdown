@@ -15,21 +15,19 @@ Here's how to express Bayes Rule in Prolly:
 Ps.rv(color: blue).given(size: red).prob * Ps.rv(size: red).prob / Ps.rv(color: blue).prob
 ```
 
-And the above will calculate P(Size=red | color= blue)
-
-## Examples
-
-There are examples of using Prolly to write learning algorithms.
-
-- [Decision Tree](https://github.com/iamwilhelm/prolly/tree/master/examples/decision_tree)
+And the above will calculate P(Size=red | Color= blue)
 
 ## Installing
 
+Use ruby gems to install
+
 `gem install prolly`
+
+If you use Bundler, just add it to your Gemfile, and then run `bundle install`
 
 ## Usage
 
-Say you have a jar with green and blue marbles, and the sizes can be big or small. 
+We first add samples of observable events to be able to estimate the probability of the events we've seen. Then we can query it with Prolly to know the probability of different events.
 
 ### Adding samples
 
@@ -37,6 +35,8 @@ Now we add the samples of data that we've observed for the random variable. Pres
 enough dataset that we can reasonably estimate each RV using the Central limit theorem.
 
 ```
+require 'prolly'
+
 Ps.add({ color: :blue, size: :small })
 Ps.add({ color: :blue, size: :big })
 Ps.add({ color: :blue, size: :big })
@@ -72,12 +72,13 @@ And that will give you the probability of the random variable Color is :blue giv
 
 A random variable can be specified `Ps.rv(:color)` or unspecified `Ps.rv(color: :blue)`. So too can conditional random variables be specified or unspecified. 
 
-Prolly currently supports four operations.
+Prolly currently supports five operations.
 
 - .prob &middot; Calculates probability, a fractional number representing the belief you have that an event will occur; based on the amount of evidence you've seen for that event.
 - .pdf &middot; Calculates probability density function, a hash of all possible probabilities for the random variable. 
 - .entropy &middot; Calculates entropy, a fractional number representing the spikiness or smoothness of a density function, which implies how much information is in the random variable.
 - .infogain &middot; Calculates information gain, a fractional number representing the amount of information (that is, reduction in uncertainty) that knowing either variable provides about the other.
+- .count &middot; Counts the number of events satisfying the conditions.
 
 Each of the operations will only work with certain combinations of random variables. The possibilities are listed below, and Prolly will throw an exception if it's violated. 
 
@@ -102,7 +103,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
@@ -111,7 +112,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
@@ -120,7 +121,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
@@ -129,7 +130,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
@@ -138,7 +139,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
@@ -147,7 +148,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
@@ -156,7 +157,7 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
@@ -165,25 +166,25 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
-		<th/>
-		<th/>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th/>
 		<th></th>
+		<th></th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
 		<th>.given(:size)</th>
-		<th/>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
 		<th></th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
@@ -192,7 +193,7 @@ Legend:
 		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
@@ -201,7 +202,7 @@ Legend:
 		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color)</th>
@@ -210,7 +211,7 @@ Legend:
 		<th></th>
 		<th>&#10003;</th>
 		<th>&#10003;</th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
@@ -219,7 +220,7 @@ Legend:
 		<th>&Delta;!</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
@@ -228,7 +229,7 @@ Legend:
 		<th>&Delta;!</th>
 		<th>&Delta;!</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
@@ -237,7 +238,7 @@ Legend:
 		<th>&Delta;!</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
@@ -246,7 +247,7 @@ Legend:
 		<th>&Delta;!</th>
 		<th>&Delta;!</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 	<tr>
 		<th>Ps.rv(:color, :texture)</th>
@@ -255,10 +256,15 @@ Legend:
 		<th>&Delta;!</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th></th>
+		<th>&#10003;</th>
 	</tr>
 </table>
+
 ## Examples
+
+There are examples of using Prolly to write learning algorithms.
+
+- [Decision Tree](https://github.com/iamwilhelm/prolly/tree/master/examples/decision_tree)
 
 ### Probabilities
 
@@ -332,9 +338,19 @@ Ps.rv(:color).given(:size).count
 
 ## Contributing
 
+Write some specs, make sure the entire thing passes. Then submit a pull request.
+
 ## Contributors
+
+- Wil Chung 
 
 ## License
 
 MIT license
+
+## Changelog
+
+0.0.1
+ - Add samples
+ - Calculate probability, density functions, entropy, infogain.
 
