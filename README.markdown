@@ -4,6 +4,13 @@
 Being able to express probabilities is useful for writing machine learning algorithms
 at a higher level of abstraction.
 
+Just like a database has a query language this is a query language specifically for
+answering questions about probabilities of events based on the samples you've seen
+before.
+
+So instead of gathering and counting all the events yourself, you just express it
+as a DSL like how math books have expressed it.
+
 ## What can I use this for?
 
 A couple years back, I was reading [a blog post](http://weblog.raganwald.com/2008/02/naive-approach-to-hiring-people.html) by Raganwald, where I read this quote:
