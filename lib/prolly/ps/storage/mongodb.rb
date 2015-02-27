@@ -42,7 +42,7 @@ module Prolly
               Hash[*rvs.flat_map { |rv| [rv, { '$exists' => true }] }]
             ).count
           elsif rvs.kind_of?(Hash)
-            @session[:samples].find(rvs).count
+            @session[:samples].find(to_query_hash(rvs)).count
           end
         end
 
@@ -67,6 +67,12 @@ module Prolly
           new_rvs(datum).each do |rv|
             @session[:rand_vars].insert({ name: rv })
           end
+        end
+
+        def to_query_hash(rvs)
+          Hash[*rvs.flat_map { |k, v|
+            [k, v.kind_of?(Array) ? { "$in" => v } : v]
+          }]
         end
 
       end

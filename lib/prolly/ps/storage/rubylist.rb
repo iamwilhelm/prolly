@@ -26,20 +26,15 @@ module Prolly
           if rvs.kind_of?(Array)
             value = @data.count { |e| rvs.all? { |rv| e.has_key?(rv) } }
           elsif rvs.kind_of?(Hash)
-            value = @data.count { |e| rvs.map { |rkey, rval| e[rkey] == rval }.all? }
+            value = @data.count { |e|
+              rvs.map { |rkey, rval|
+                vals = rval.kind_of?(Array) ? rval : [rval]
+                vals.include?(e[rkey])
+              }.all?
+            }
           end
           elapsed = Time.now - start_time
           return value
-
-          #if @stash.has_key?(rvs.to_s) and reload == false
-          #  @stash_stats[:hits] += 1
-          #  @stash_time[rvs.to_s][:usage] += 1
-          #  return @stash[rvs.to_s]
-          #else
-          #  @stash_stats[:misses] += 1
-          #  @stash_time[rvs.to_s] = { elapsed: elapsed, usage: 0 }
-          #  return @stash[rvs.to_s] = value
-          #end
         end
 
         def rand_vars

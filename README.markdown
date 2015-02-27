@@ -149,6 +149,15 @@ Legend:
 		<th></th>
 		<th>&#10003;</th>
 	</tr>
+  <tr>
+    <th>Ps.rv(color: [:blue, :green])</th>
+    <th></th>
+    <th>&#10003;</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th>&#10003;</th>
+  </tr>
 	<tr>
 		<th>Ps.rv(color: :blue, texture: :rough)</th>
 		<th></th>
@@ -297,6 +306,12 @@ What is the joint probability there is a blue marble that also has a rough textu
 Ps.rv(color: :blue, texture: :rough).prob
 ```
 
+What is the probability a marble is small or med sized?
+```ruby
+# P(S = small, med)
+Ps.rv(size: [:small, :med]).prob
+```
+
 What is the probability of a blue marble given that the marble is small?
 ```ruby
 # P(C = blue | S = small)
@@ -353,6 +368,23 @@ Ps.rv(color: :blue).count
 Ps.rv(:color).given(:size).count
 ```
 
+## Stores
+
+Prolly can use different stores to remember the prior event data from which it 
+calculates the probability. Currently Prolly implements a RubyList store and a
+Mongodb store. 
+
+### Implementing new stores
+
+The interface for a new store is pretty easy. It just needs to implement six methods:
+
+- initialize
+- reset
+- add(datum)
+- count(rvs, options = {})
+- rand_vars
+- uniq_vals(name)
+
 ## Motivation
 
 A couple years back, I was reading [a blog post](http://weblog.raganwald.com/2008/02/naive-approach-to-hiring-people.html) by Raganwald, where I read this quote:
@@ -379,3 +411,5 @@ Write some specs, make sure the entire thing passes. Then submit a pull request.
 ## License
 
 MIT license
+
+

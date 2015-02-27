@@ -5,27 +5,12 @@ module Prolly
 
       def prob
         #puts "P(#{@rv} | #{@gv})"
-        if !@spec_rv.empty?
+        raise StandardError.new("Cannot use prob on this RV") if @spec_rv.empty?
 
-          if @uspec_gv.empty? and @spec_gv.empty?
-            prob_rv_eq
-          else
-            prob_rv_eq_gv_eq
-          end
-
+        if @uspec_gv.empty? and @spec_gv.empty?
+          prob_rv_eq
         else
-          #puts "distr : #{@rv.to_s} : #{@gv.to_s}"
-
-          raise StandardError.new("Cannot use prob on this RV")
-
-          #if @uspec_gv.empty? and @spec_gv.empty?
-          #  #prob_rv
-          #elsif not @spec_gv.empty?
-          #  #prob_rv_gv_eq
-          #else
-          #  #prob_rv_gv
-          #end
-
+          prob_rv_eq_gv_eq
         end
       end
 
@@ -33,6 +18,7 @@ module Prolly
 
       # P(color=green)
       # P(color=green, size=small)
+      # P(color=[green, blue])
       def prob_rv_eq
         numer = self.count()
         denom = @pspace.count(@spec_rv.keys)

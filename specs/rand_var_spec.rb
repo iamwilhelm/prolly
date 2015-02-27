@@ -93,6 +93,12 @@ describe RandVar do
           ).to be_within(0.001).of(2.0 / 5)
         end
       end
+
+      context "when prob size = [small, med]" do
+        it "is 4 / 5" do
+          expect(Ps.rv(size: [:small, :med]).prob).to be_within(0.001).of(4.0 / 5)
+        end
+      end
     end
 
     describe "#prob_rv_eq_gv_eq" do
