@@ -5,18 +5,16 @@ Just like a database has a query language (SQL), this is a query language
 specifically for answering questions about probabilities of events based on the
 samples you've seen before.
 
-So instead of gathering and counting all the events yourself, you just express
-probabilities much like how math books have expressed it. Being able to express
+So instead of counting all the events yourself, you just express
+probabilities much like how math books express it. Being able to express
 probabilities is useful for writing machine learning algorithms at a higher level
-of abstraction
+of abstraction. The right level abstraction makes things easier to build.
 
 We can now making decisions in code not just based on the current data, like `if`
 statements do, but we can make decisions based on the chance of prior data and 
 the current data, and that makes for smarter software.
 
 ## What can I use this for?
-
-
 
 There are examples of using Prolly to write learning algorithms.
 
