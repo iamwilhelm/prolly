@@ -122,6 +122,13 @@ describe RandVar do
           expect(result).to be_within(0.001).of(1.0)
         end
       end
+
+      context "when prob color=green | size=[small,med]" do
+        it "is 1/2" do
+          result = Ps.rv(color: :green).given(size: [:small, :med]).prob
+          expect(result).to be_within(0.001).of(1.0 / 2)
+        end
+      end
     end
 
     describe "#prob_rv_eq_gv" do

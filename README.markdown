@@ -149,6 +149,15 @@ Legend:
 		<th></th>
 		<th>&#10003;</th>
 	</tr>
+ 	<tr>
+		<th>Ps.rv(color: :blue)</th>
+		<th>.given(size: [:small, :med])</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th>&#10003;</th>
+	</tr>
   <tr>
     <th>Ps.rv(color: [:blue, :green])</th>
     <th></th>
