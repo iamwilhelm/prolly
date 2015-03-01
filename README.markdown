@@ -29,7 +29,8 @@ entropies of random variables as well as the information gain.
 Here's how to express Bayes Rule in Prolly:
 
 ```
-Ps.rv(color: blue).given(size: red).prob * Ps.rv(size: red).prob / Ps.rv(color: blue).prob
+Ps.rv(color: blue).given(size: red).prob * Ps.rv(size: red).prob
+  / Ps.rv(color: blue).prob
 ```
 
 And the above will calculate P(Size=red | Color= blue)
@@ -49,10 +50,11 @@ We first add samples of observable events to be able to estimate the probability
 ### Adding samples
 
 Now we add the samples of data that we've observed for the random variable. Presumably, we have a large
-enough dataset that we can reasonably estimate each RV using the Central limit theorem.
+enough dataset that we can reasonably estimate each specified RV.
 
 ```
 require 'prolly'
+include Prolly
 
 Ps.add({ color: :blue, size: :small })
 Ps.add({ color: :blue, size: :big })
@@ -62,6 +64,9 @@ Ps.add({ color: :green, size: :small })
 ```
 
 Now that we have samples to estimate our probabilities, we're good to go on how to express them.
+
+>Note that you need you'll need to `include Prolly` into whatever namespace you're using it in, in order to call `Ps.add`. Otherwise, you'll need
+to type: `Prolly::Ps.add`, if `Ps` is already taken in your namespace.
 
 ### Expressing Stochastics through Probability Space
 
@@ -79,7 +84,7 @@ And if necessary, pick a conditional random variable
 ```
 Ps.rv(color: :blue).given(size: :small)
 ```
-Then pick the operation, where it can be `prob`, `entropy`, or `infogain`.
+Then pick the operation, where it can be `count`, `prob`, `pdf`, `entropy`, or `infogain`.
 ```
 Ps.rv(color: :blue).given(size: :small).prob
 ```
@@ -143,15 +148,6 @@ Legend:
 	<tr>
 		<th>Ps.rv(color: :blue)</th>
 		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
- 	<tr>
-		<th>Ps.rv(color: :blue)</th>
-		<th>.given(size: [:small, :med])</th>
 		<th>&#10003;</th>
 		<th></th>
 		<th></th>
@@ -387,12 +383,33 @@ Mongodb store.
 
 The interface for a new store is pretty easy. It just needs to implement six methods:
 
-- initialize
-- reset
-- add(datum)
-- count(rvs, options = {})
-- rand_vars
-- uniq_vals(name)
+#### initialize
+
+This just brings up the store, and connects to it, and whatever else you need to do in the beginning.
+
+#### reset
+
+This should just clear the entire store of the data in the collection.
+
+#### add(datum)
+
+Adds one row of data to the store.
+
+#### count(rvs, options = {})
+
+Counts the number of samples that satisfy the RVs requested. `rvs` can be either an Array or a Hash. When it's an array, you must count all
+samples that have all the RVs. 
+
+When it's a hash, you must look for all samples that not only have the random variables, but also have the matching designated 
+values. Note that the values can be an array. When that happens, the user is indicating that it also would like any of the values the RV to match.
+
+#### rand_vars
+
+Return a list of all random variables
+
+#### uniq_vals(name)
+
+Return a list of all uniq values of a random variable.
 
 ## Motivation
 
@@ -421,4 +438,9 @@ Write some specs, make sure the entire thing passes. Then submit a pull request.
 
 MIT license
 
+## Changelog
 
+### v0.0.1
+
+- Initial release with counts, probs, pdf, entropy, and infogain.
+- implements two stores, RubyList and Mongodb
