@@ -29,7 +29,7 @@ module Prolly
             value = @data.count { |e|
               rvs.map { |rkey, rval|
                 vals = rval.kind_of?(Array) ? rval : [rval]
-                vals.include?(e[rkey])
+                vals.include?(e[rkey]) == rval
               }.all?
             }
           end
