@@ -3,7 +3,7 @@ require "prolly/rand_var"
 
 require "prolly/ps/storage/rubylist"
 require "prolly/ps/storage/mongodb"
-require "prolly/ps/storage/redis"
+#require "prolly/ps/storage/redis"
 
 module Prolly
   class Ps
