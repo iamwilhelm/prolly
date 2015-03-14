@@ -6,9 +6,10 @@ specifically for answering questions about probabilities of events based on the
 samples you've seen before.
 
 So instead of counting all the events yourself, you just express
-probabilities much like how math books express it. Being able to express
-probabilities is useful for writing machine learning algorithms at a higher level
-of abstraction. The right level abstraction makes things easier to build.
+probabilities, entropies, and information gain much like how math books express it.
+Being able to express probabilities is useful for writing machine learning 
+algorithms at a higher level of abstraction. The right level abstraction makes things
+easier to build.
 
 We can now making decisions in code not just based on the current data, like `if`
 statements do, but we can make decisions based on the chance of prior data and 
@@ -90,7 +91,82 @@ Ps.rv(color: :blue).given(size: :small).prob
 ```
 And that will give you the probability of the random variable Color is :blue given that the Size was :small. 
 
-### Random Variables and Operations
+### Probabilities
+
+What is the probability there is a blue marble?
+```ruby
+# P(C = blue)
+Ps.rv(color: :blue).prob
+```
+
+What is the joint probability there is a blue marble that also has a rough texture?
+```ruby
+# P(C = blue, T = rough)
+Ps.rv(color: :blue, texture: :rough).prob
+```
+
+What is the probability a marble is small or med sized?
+```ruby
+# P(S = small, med)
+Ps.rv(size: [:small, :med]).prob
+```
+
+What is the probability of a blue marble given that the marble is small?
+```ruby
+# P(C = blue | S = small)
+Ps.rv(color: :blue).given(size: :small).prob
+```
+
+What is the probability of a blue marble and rough texture given that the marble is small?
+```ruby
+# P(C = blue, T = rough | S = small)
+Ps.rv(color: :blue, texture: :rough).given(size: :small).prob
+```
+
+### Probability density functions
+
+Probability density for a random variable.
+```ruby
+Ps.rv(:color).pdf
+```
+
+Probability density for a conditional random variable.
+```ruby
+Ps.rv(:color).given(size: :small).pdf
+```
+
+### Entropy
+
+Entropy of the RV color.
+```ruby
+# H(C)
+Ps.rv(:color).entropy
+```
+
+Entropy of color given the marble is small
+```ruby
+# H(C | S = small)
+Ps.rv(:color).given(size: :small).entropy
+```
+
+### Information Gain
+
+Information gain of color and size.
+```ruby
+# IG(C | S)
+Ps.rv(:color).given(:size).infogain
+```
+### Counts
+
+At the base of all the probabilities are counts of stuff.
+```ruby
+Ps.rv(color: :blue).count
+```
+
+```ruby
+Ps.rv(:color).given(:size).count
+```
+## Operation Reference
 
 A random variable can be specified `Ps.rv(:color)` or unspecified `Ps.rv(color: :blue)`. So too can conditional random variables be specified or unspecified. 
 
@@ -290,88 +366,6 @@ Legend:
 		<th>&#10003;</th>
 	</tr>
 </table>
-
-## Examples
-
-There are examples of using Prolly to write learning algorithms.
-
-- [Decision Tree](https://github.com/iamwilhelm/prolly/tree/master/examples/decision_tree)
-
-### Probabilities
-
-What is the probability there is a blue marble?
-```ruby
-# P(C = blue)
-Ps.rv(color: :blue).prob
-```
-
-What is the joint probability there is a blue marble that also has a rough texture?
-```ruby
-# P(C = blue, T = rough)
-Ps.rv(color: :blue, texture: :rough).prob
-```
-
-What is the probability a marble is small or med sized?
-```ruby
-# P(S = small, med)
-Ps.rv(size: [:small, :med]).prob
-```
-
-What is the probability of a blue marble given that the marble is small?
-```ruby
-# P(C = blue | S = small)
-Ps.rv(color: :blue).given(size: :small).prob
-```
-
-What is the probability of a blue marble and rough texture given that the marble is small?
-```ruby
-# P(C = blue, T = rough | S = small)
-Ps.rv(color: :blue, texture: :rough).given(size: :small).prob
-```
-
-### Probability density functions
-
-Probability density for a random variable.
-```ruby
-Ps.rv(:color).pdf
-```
-
-Probability density for a conditional random variable.
-```ruby
-Ps.rv(:color).given(size: :small).pdf
-```
-
-### Entropy
-
-Entropy of the RV color.
-```ruby
-# H(C)
-Ps.rv(:color).entropy
-```
-
-Entropy of color given the marble is small
-```ruby
-# H(C | S = small)
-Ps.rv(:color).given(size: :small).entropy
-```
-
-### Information Gain
-
-Information gain of color and size.
-```ruby
-# IG(C | S)
-Ps.rv(:color).given(:size).infogain
-```
-### Counts
-
-At the base of all the probabilities are counts of stuff.
-```ruby
-Ps.rv(color: :blue).count
-```
-
-```ruby
-Ps.rv(:color).given(:size).count
-```
 
 ## Stores
 
