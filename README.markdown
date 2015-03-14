@@ -156,6 +156,13 @@ Information gain of color and size.
 # IG(C | S)
 Ps.rv(:color).given(:size).infogain
 ```
+
+Information gain of color and size, when we already know texture and opacity.
+```ruby
+# IG(C | S, T=smooth, O=opaque)
+Ps.rv(:color).given(:size, { texture: :smooth, opacity: :opaque }).infogain
+```
+
 ### Counts
 
 At the base of all the probabilities are counts of stuff.
@@ -166,17 +173,17 @@ Ps.rv(color: :blue).count
 ```ruby
 Ps.rv(:color).given(:size).count
 ```
-## Operation Reference
+## Full Reference
 
 A random variable can be specified `Ps.rv(:color)` or unspecified `Ps.rv(color: :blue)`. So too can conditional random variables be specified or unspecified. 
 
 Prolly currently supports five operations.
 
-- .prob &middot; Calculates probability, a fractional number representing the belief you have that an event will occur; based on the amount of evidence you've seen for that event.
-- .pdf &middot; Calculates probability density function, a hash of all possible probabilities for the random variable. 
-- .entropy &middot; Calculates entropy, a fractional number representing the spikiness or smoothness of a density function, which implies how much information is in the random variable.
-- .infogain &middot; Calculates information gain, a fractional number representing the amount of information (that is, reduction in uncertainty) that knowing either variable provides about the other.
-- .count &middot; Counts the number of events satisfying the conditions.
+- .prob() &middot; Calculates probability, a fractional number representing the belief you have that an event will occur; based on the amount of evidence you've seen for that event.
+- .pdf() &middot; Calculates probability density function, a hash of all possible probabilities for the random variable. 
+- .entropy() &middot; Calculates entropy, a fractional number representing the spikiness or smoothness of a density function, which implies how much information is in the random variable.
+- .infogain() &middot; Calculates information gain, a fractional number representing the amount of information (that is, reduction in uncertainty) that knowing either variable provides about the other.
+- .count() &middot; Counts the number of events satisfying the conditions.
 
 Each of the operations will only work with certain combinations of random variables. The possibilities are listed below, and Prolly will throw an exception if it's violated. 
 
@@ -184,185 +191,297 @@ Legend:
  - &#10003; available for this operator
  - &Delta;! available, but not yet implemented for this operator.
 
+### The Probability Operator: .prob()
+
 <table>
 	<tr>
-		<th>RandVar</th>
-		<th>Given</th>
-		<th>.prob</th>
-		<th>.pdf</th>
-		<th>.entropy</th>
-		<th>.infogain</th>
-		<th>.count</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
 		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
+		<th>n/a</th>
 		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
 		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue)</th>
 		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-  <tr>
-    <th>Ps.rv(color: [:blue, :green])</th>
-    <th></th>
-    <th>&#10003;</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th>&#10003;</th>
-  </tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(:size)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(color: :blue, texture: :rough)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color)</th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color)</th>
-		<th>.given(:size)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color)</th>
-		<th>.given(size: :small)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color)</th>
-		<th>.given(size: :small, weight: :fat)</th>
-		<th></th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color)</th>
 		<th>.given(:size, weight: :fat)</th>
-		<th></th>
-		<th></th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
-		<th>&#10003;</th>
+		<th>.given(:size, :weight)</th>
 	</tr>
 	<tr>
-		<th>Ps.rv(:color, :texture)</th>
-		<th></th>
-		<th></th>
-		<th>&Delta;!</th>
+		<th>rv(color: :blue)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th></th>
-		<th>&#10003;</th>
+		<th></th>
 	</tr>
 	<tr>
-		<th>Ps.rv(:color, :texture)</th>
+		<th>rv(color: [:blue, :green])</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue, texture: :rough)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color, :texture)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+</table>
+
+### The Probability Density Function Operator: .pdf()
+
+<table>
+	<tr>
+		<th></th>
+		<th>n/a</th>
 		<th>.given(:size)</th>
-		<th></th>
-		<th>&Delta;!</th>
-		<th>&Delta;!</th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(size: :small)</th>
-		<th></th>
-		<th>&Delta;!</th>
-		<th>&#10003;</th>
-		<th></th>
-		<th>&#10003;</th>
-	</tr>
-	<tr>
-		<th>Ps.rv(:color, :texture)</th>
 		<th>.given(size: :small, weight: :fat)</th>
+		<th>.given(:size, weight: :fat)</th>
+		<th>.given(:size, :weight)</th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue)</th>
 		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: [:blue, :green])</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue, texture: :rough)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color, :texture)</th>
 		<th>&Delta;!</th>
 		<th>&Delta;!</th>
+		<th>&Delta;!</th>
+		<th>&Delta;!</th>
+		<th>&Delta;!</th>
 		<th></th>
+	</tr>
+</table>
+
+### The Entropy Operator: .entropy()
+
+<table>
+	<tr>
+		<th></th>
+		<th>n/a</th>
+		<th>.given(:size)</th>
+		<th>.given(size: :small)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>.given(:size, weight: :fat)</th>
+		<th>.given(:size, :weight)</th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: [:blue, :green])</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue, texture: :rough)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color, :texture)</th>
+		<th>&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&#10003;</th>
+		<th>&Delta;!</th>
+		<th>&#10003;</th>
+		<th></th>
+	</tr>
+</table>
+
+### The Information Gain Operator: .infogain()
+
+<table>
+	<tr>
+		<th></th>
+		<th>n/a</th>
+		<th>.given(:size)</th>
+		<th>.given(size: :small)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>.given(:size, weight: :fat)</th>
+		<th>.given(:size, :weight)</th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: [:blue, :green])</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue, texture: :rough)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color)</th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+		<th></th>
+		<th>&#10003;</th>
+		<th></th>
+	</tr>
+	<tr>
+		<th>rv(:color, :texture)</th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+		<th></th>
+	</tr>
+</table>
+
+### The Count Operator: .count()
+
+<table>
+	<tr>
+		<th></th>
+		<th>n/a</th>
+		<th>.given(:size)</th>
+		<th>.given(size: :small)</th>
+		<th>.given(size: :small, weight: :fat)</th>
+		<th>.given(:size, weight: :fat)</th>
+		<th>.given(:size, :weight)</th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th>&#10003;</th>
 	</tr>
 	<tr>
-		<th>Ps.rv(:color, :texture)</th>
-		<th>.given(:size, weight: :fat)</th>
-		<th></th>
-		<th>&Delta;!</th>
+		<th>rv(color: [:blue, :green])</th>
 		<th>&#10003;</th>
-		<th></th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+	</tr>
+	<tr>
+		<th>rv(color: :blue, texture: :rough)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+	</tr>
+	<tr>
+		<th>rv(:color)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+	</tr>
+	<tr>
+		<th>rv(:color, :texture)</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
+		<th>&#10003;</th>
 		<th>&#10003;</th>
 	</tr>
 </table>
