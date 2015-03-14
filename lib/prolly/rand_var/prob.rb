@@ -33,6 +33,7 @@ module Prolly
       # P(color=green | size=small)
       # P(color=green, size=small | texture=smooth)
       # P(color=green | size=small, texture=smooth)
+      # P(color=green | size=[small, large])
       def prob_rv_eq_gv_eq
         numer = @pspace.count(@spec_rv.merge(@spec_gv))
         denom = @pspace.count(@spec_gv)

@@ -200,11 +200,13 @@ Legend:
 		<th>.given(:size)</th>
 		<th>.given(size: :small)</th>
 		<th>.given(size: :small, weight: :fat)</th>
+    <th>.given(size: [:small, :large])</th>
 		<th>.given(:size, weight: :fat)</th>
 		<th>.given(:size, :weight)</th>
 	</tr>
 	<tr>
 		<th>rv(color: :blue)</th>
+		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th>&#10003;</th>
@@ -218,11 +220,13 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
+		<th>&#10003;</th>
 		<th></th>
 		<th></th>
 	</tr>
 	<tr>
 		<th>rv(color: :blue, texture: :rough)</th>
+		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th>&#10003;</th>
 		<th>&#10003;</th>
@@ -238,9 +242,11 @@ Legend:
 		<th></th>
 		<th></th>
 		<th></th>
+		<th></th>
 	</tr>
 	<tr>
 		<th>rv(:color, :texture)</th>
+		<th></th>
 		<th></th>
 		<th></th>
 		<th></th>

@@ -29,6 +29,8 @@ module Prolly
     #
     # { size: :large, color: :green }
     #
+    # { size: [:large, :small] }
+    #
     # [ :size, { color: :green, texture: :rough } ]
     #
     def parse(rand_vars)
