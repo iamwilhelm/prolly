@@ -131,11 +131,19 @@ describe RandVar do
       end
 
       context "where prob color=[blue, green] | size=[small, med]" do
-        it "is " do
+        it "is 1/2" do
           result = Ps.rv(color: [:yellow, :green]).given(size: [:small, :med]).prob
           expect(result).to be_within(0.001).of(1.0 / 2)
         end
       end
+
+      context "where prob color=blue texture=rough | size=[med, large]" do
+        it "is 1/2" do
+          result = Ps.rv(color: :green, texture: :rough).given(size: [:med, :large]).prob
+          expect(result).to be_within(0.001).of(1.0 / 2)
+        end
+      end
+
     end
 
     describe "#prob_rv_eq_gv" do
