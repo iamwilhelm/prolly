@@ -15,7 +15,7 @@ describe RandVar do
     ]
   }
 
-  before do
+  before(:each) do
     Ps.reset
     Ps.import(data)
   end

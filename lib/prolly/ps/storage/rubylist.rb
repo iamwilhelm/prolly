@@ -22,18 +22,16 @@ module Prolly
 
         def count(rvs, options = {})
           reload = options[:reload] || false
-          start_time = Time.now
           if rvs.kind_of?(Array)
             value = @data.count { |e| rvs.all? { |rv| e.has_key?(rv) } }
           elsif rvs.kind_of?(Hash)
             value = @data.count { |e|
               rvs.map { |rkey, rval|
                 vals = rval.kind_of?(Array) ? rval : [rval]
-                vals.include?(e[rkey]) == rval
+                vals.include?(e[rkey])
               }.all?
             }
           end
-          elapsed = Time.now - start_time
           return value
         end
 

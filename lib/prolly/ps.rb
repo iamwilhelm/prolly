@@ -60,9 +60,9 @@ module Prolly
 
     def_delegators :@storage, :reset, :add, :count, :rand_vars, :uniq_vals, :import
 
-    def initialize
-      #@storage = Storage::Rubylist.new()
-      @storage = Storage::Mongodb.new()
+    def initialize(storage = nil)
+      #@storage = Storage::Mongodb.new()
+      @storage = Storage::Rubylist.new()
       #@storage = Storage::Redis.new()
     end
 
