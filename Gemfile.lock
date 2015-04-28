@@ -9,7 +9,6 @@ GEM
       connection_pool (~> 2.0)
       optionable (~> 0.2.0)
     optionable (0.2.0)
-    redis (3.2.1)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -28,5 +27,4 @@ PLATFORMS
 
 DEPENDENCIES
   moped (~> 2.0.3)
-  redis (~> 3.2.1)
   rspec
