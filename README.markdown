@@ -557,3 +557,7 @@ MIT license
 
 - Initial release with counts, probs, pdf, entropy, and infogain.
 - implements two stores, RubyList and Mongodb
+
+### v0.0.2
+
+- fix: RubyList storage had a bug that counted incorrectly.
