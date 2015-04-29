@@ -53,7 +53,7 @@ module Prolly
         def uniq_vals(name)
           @session[:samples].aggregate([
             { "$match" => { name.to_sym => { "$exists" => true } } },
-            { "$group" => { "_id": "$#{name}" } }
+            { "$group" => { "_id" => "$#{name}" } }
           ]).map { |e| e["_id"] }
         end
 

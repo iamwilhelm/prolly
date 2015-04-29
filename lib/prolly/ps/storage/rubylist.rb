@@ -7,7 +7,7 @@ module Prolly
       class Rubylist < Base
 
         def initialize
-          super
+          reset
         end
 
         def reset
